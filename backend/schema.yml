@@ -1,0 +1,752 @@
+openapi: 3.0.3
+info:
+  title: Government Press Release API
+  version: 1.0.0
+  description: A comprehensive API for accessing and managing government press releases,
+    translations, and related metadata. This API provides endpoints for retrieving
+    press releases, ministries, audience types, categories, and translated content.
+  contact:
+    name: API Support
+    email: support@example.com
+  license:
+    name: MIT License
+    url: https://opensource.org/licenses/MIT
+paths:
+  /api/press-release/:
+    get:
+      operationId: api_press_release_list
+      description: Retrieve a paginated list of government press releases with optional
+        filtering by ministry, date, category, and audience type. Results are ordered
+        by publication date (newest first).
+      summary: List Press Releases
+      parameters:
+      - in: query
+        name: audience_type
+        schema:
+          type: integer
+        description: Filter by audience type ID
+      - in: query
+        name: audience_type_name
+        schema:
+          type: string
+      - in: query
+        name: category
+        schema:
+          type: integer
+        description: Filter by category ID
+      - in: query
+        name: category_name
+        schema:
+          type: string
+      - in: query
+        name: date_published
+        schema:
+          type: string
+          format: date
+        description: Filter by publication date (YYYY-MM-DD)
+      - in: query
+        name: date_published__gte
+        schema:
+          type: string
+          format: date
+        description: Filter by publication date greater than or equal to (YYYY-MM-DD)
+      - in: query
+        name: date_published__lte
+        schema:
+          type: string
+          format: date
+        description: Filter by publication date less than or equal to (YYYY-MM-DD)
+      - in: query
+        name: date_published_max
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: date_published_min
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: has_translation_language
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - en
+            - hi
+            - ta
+        description: Filter by multiple language codes, comma separated.
+        explode: false
+        style: form
+      - in: query
+        name: id
+        schema:
+          type: integer
+      - in: query
+        name: ministry
+        schema:
+          type: integer
+        description: Filter by ministry ID
+      - in: query
+        name: ministry_name
+        schema:
+          type: string
+      - in: query
+        name: ordering
+        schema:
+          type: string
+        description: Order results by date_published (use -date_published for descending)
+      - in: query
+        name: page
+        schema:
+          type: integer
+        description: Page number for pagination
+      - in: query
+        name: pib_hq
+        schema:
+          type: string
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Search in title and original text
+      - in: query
+        name: source_url
+        schema:
+          type: string
+      - in: query
+        name: title
+        schema:
+          type: string
+      tags:
+      - Press Releases
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPressReleaseList'
+              examples:
+                PressReleaseExample:
+                  value:
+                    count: 123
+                    next: http://api.example.org/accounts/?page=4
+                    previous: http://api.example.org/accounts/?page=2
+                    results:
+                    - id: 1
+                      title: Government Announces New Digital India Initiative
+                      original_text: The Government of India today announced a comprehensive
+                        Digital India initiative...
+                      source_url: https://pib.gov.in/PressReleaseIframePage.aspx?PRID=1234567
+                      date_published: '2024-01-15T10:30:00Z'
+                      pib_hq: Delhi
+                      ministry: 1
+                      audience_type:
+                      - 1
+                      - 2
+                      category:
+                      - 1
+                      created_at: '2024-01-15T10:35:00Z'
+                      updated_at: '2024-01-15T10:35:00Z'
+                  summary: Press Release Example
+          description: ''
+  /api/press-release/{id}/:
+    get:
+      operationId: api_press_release_retrieve
+      description: Retrieve detailed information about a specific press release including
+        all related translations, ministry, categories, and audience types.
+      summary: Get Press Release Details
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Unique identifier of the press release
+        required: true
+      tags:
+      - Press Releases
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PressRelease'
+              examples:
+                PressReleaseExample:
+                  value:
+                    id: 1
+                    title: Government Announces New Digital India Initiative
+                    original_text: The Government of India today announced a comprehensive
+                      Digital India initiative...
+                    source_url: https://pib.gov.in/PressReleaseIframePage.aspx?PRID=1234567
+                    date_published: '2024-01-15T10:30:00Z'
+                    pib_hq: Delhi
+                    ministry: 1
+                    audience_type:
+                    - 1
+                    - 2
+                    category:
+                    - 1
+                    created_at: '2024-01-15T10:35:00Z'
+                    updated_at: '2024-01-15T10:35:00Z'
+                  summary: Press Release Example
+          description: ''
+  /api/ministry/:
+    get:
+      operationId: api_ministry_list
+      description: Retrieve a list of all government ministries with optional filtering
+        capabilities.
+      summary: List Ministries
+      parameters:
+      - in: query
+        name: name
+        schema:
+          type: string
+        description: Filter by ministry name (partial match)
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - Metadata
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedMinistryList'
+              examples:
+                MinistryExample:
+                  value:
+                    count: 123
+                    next: http://api.example.org/accounts/?page=4
+                    previous: http://api.example.org/accounts/?page=2
+                    results:
+                    - id: 1
+                      name: Ministry of Electronics and Information Technology
+                  summary: Ministry Example
+          description: ''
+  /api/audience-type/:
+    get:
+      operationId: api_audience_type_list
+      description: Retrieve a list of all audience types with optional filtering capabilities.
+      summary: List Audience Types
+      parameters:
+      - in: query
+        name: name
+        schema:
+          type: string
+        description: Filter by audience type name (partial match)
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - Metadata
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAudienceTypeList'
+              examples:
+                AudienceTypeExample:
+                  value:
+                    count: 123
+                    next: http://api.example.org/accounts/?page=4
+                    previous: http://api.example.org/accounts/?page=2
+                    results:
+                    - id: 1
+                      name: Citizens
+                  summary: Audience Type Example
+          description: ''
+  /api/category/:
+    get:
+      operationId: api_category_list
+      description: Retrieve a list of all categories with optional filtering capabilities.
+      summary: List Categories
+      parameters:
+      - in: query
+        name: name
+        schema:
+          type: string
+        description: Filter by category name (partial match)
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - Metadata
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCategoryList'
+              examples:
+                CategoryExample:
+                  value:
+                    count: 123
+                    next: http://api.example.org/accounts/?page=4
+                    previous: http://api.example.org/accounts/?page=2
+                    results:
+                    - id: 1
+                      name: Technology
+                  summary: Category Example
+          description: ''
+  /api/translated-text/:
+    get:
+      operationId: api_translated_text_list
+      description: Retrieve a list of translated texts with optional filtering by
+        press release, language, and text type.
+      summary: List Translated Texts
+      parameters:
+      - in: query
+        name: language
+        schema:
+          type: string
+        description: Filter by language code (e.g., 'hi', 'ta', 'bn')
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: query
+        name: press_release
+        schema:
+          type: integer
+        description: Filter by press release ID
+      - in: query
+        name: text_type
+        schema:
+          type: string
+        description: Filter by text type (e.g., 'summary', 'simplified')
+      tags:
+      - Translations
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTranslatedTextList'
+              examples:
+                TranslatedTextExample:
+                  value:
+                    count: 123
+                    next: http://api.example.org/accounts/?page=4
+                    previous: http://api.example.org/accounts/?page=2
+                    results:
+                    - id: 1
+                      press_release: 1
+                      language: hi
+                      text_type: summary
+                      content: भारत सरकार ने आज एक व्यापक डिजिटल इंडिया पहल की घोषणा
+                        की...
+                      title: सरकार ने नई डिजिटल इंडिया पहल की घोषणा की
+                  summary: Translated Text Example
+          description: ''
+  /api/pib-hq/:
+    get:
+      operationId: api_pib_hq_retrieve
+      description: Retrieve a list of unique PIB HQ (Press Information Bureau Headquarters)
+        values from all press releases, excluding null and empty values, ordered alphabetically.
+      summary: Get Unique PIB HQ Values
+      tags:
+      - Utilities
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pib_hq:
+                    type: array
+                    items:
+                      type: string
+                    example:
+                    - Delhi
+                    - Mumbai
+                    - Kolkata
+                    - Chennai
+              examples:
+                SuccessResponse:
+                  value:
+                    pib_hq:
+                    - Delhi
+                    - Mumbai
+                    - Kolkata
+                    - Chennai
+                  summary: Success Response
+          description: ''
+  /:
+    get:
+      operationId: root_retrieve
+      description: Check the health status of the API service
+      summary: Health Check
+      tags:
+      - Health
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+              examples:
+                SuccessResponse:
+                  value:
+                    status: ok
+                  summary: Success Response
+          description: ''
+components:
+  schemas:
+    AudienceType:
+      type: object
+      description: |-
+        Serializer for Audience Type objects.
+
+        Represents different target audiences for government communications
+        (e.g., Citizens, Businesses, Media, etc.).
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+      required:
+      - id
+      - name
+    Category:
+      type: object
+      description: |-
+        Serializer for Category objects.
+
+        Represents thematic categories for organizing press releases
+        (e.g., Technology, Healthcare, Education, etc.).
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+      required:
+      - id
+      - name
+    LanguageEnum:
+      enum:
+      - en
+      - hi
+      - ta
+      type: string
+      description: |-
+        * `en` - English
+        * `hi` - Hindi
+        * `ta` - Tamil
+    Ministry:
+      type: object
+      description: |-
+        Serializer for Ministry objects.
+
+        Represents government ministries and departments that issue press releases.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        press_release_count:
+          type: integer
+          description: Return the number of press releases from this ministry.
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+      required:
+      - id
+      - name
+      - press_release_count
+    PaginatedAudienceTypeList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AudienceType'
+    PaginatedCategoryList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+    PaginatedMinistryList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ministry'
+    PaginatedPressReleaseList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PressRelease'
+    PaginatedTranslatedTextList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TranslatedText'
+    PressRelease:
+      type: object
+      description: |-
+        Serializer for Press Release objects.
+
+        Provides complete information about government press releases including
+        title, content, publication details, and associated metadata.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 500
+        original_text:
+          type: string
+        source_url:
+          type: string
+          format: uri
+          maxLength: 200
+        date_published:
+          type: string
+          format: date-time
+        pib_hq:
+          type: string
+          nullable: true
+          maxLength: 255
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        ministry:
+          type: integer
+          nullable: true
+        audience_type:
+          type: array
+          items:
+            type: integer
+        category:
+          type: array
+          items:
+            type: integer
+      required:
+      - audience_type
+      - category
+      - created_at
+      - date_published
+      - id
+      - original_text
+      - source_url
+      - title
+      - updated_at
+    TextTypeEnum:
+      enum:
+      - original
+      - simplified
+      - oversimplified
+      - summary
+      - keypoints
+      type: string
+      description: |-
+        * `original` - Original
+        * `simplified` - Simplified
+        * `oversimplified` - Over Simplified
+        * `summary` - Summary
+        * `keypoints` - Key Points
+    TranslatedText:
+      type: object
+      description: |-
+        Serializer for Translated Text objects.
+
+        Provides translated versions of press releases in various Indian languages
+        with different text types (summary, simplified, etc.).
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        press_release_title:
+          type: string
+          readOnly: true
+        language_display:
+          type: string
+          readOnly: true
+        language:
+          $ref: '#/components/schemas/LanguageEnum'
+        text_type:
+          $ref: '#/components/schemas/TextTypeEnum'
+        content:
+          type: string
+        title:
+          type: string
+          nullable: true
+          maxLength: 500
+        press_release:
+          type: integer
+      required:
+      - content
+      - id
+      - language
+      - language_display
+      - press_release
+      - press_release_title
+      - text_type
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
+tags:
+- name: Health
+  description: System health and status endpoints
+- name: Press Releases
+  description: Operations related to government press releases
+- name: Translations
+  description: Operations related to translated content
+- name: Metadata
+  description: Operations related to ministries, categories, and audience types
+- name: Utilities
+  description: Utility endpoints for data retrieval

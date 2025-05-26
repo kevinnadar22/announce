@@ -1,0 +1,37 @@
+import { useRef } from "react";
+import Header from "@/components/Header";
+import HeroSection from "@/components/HeroSection";
+import RecentAnnouncements from "@/components/RecentAnnouncements";
+import AnnouncementsSection from "@/components/AnnouncementsSection";
+import AboutSection from "@/components/AboutSection";
+import NewsletterSection from "@/components/NewsletterSection";
+import FAQ from "@/components/FAQ";
+import Footer from "@/components/Footer";
+
+const Index = () => {
+  const announcementsRef = useRef<HTMLDivElement>(null);
+
+  const scrollToAnnouncements = () => {
+    announcementsRef.current?.scrollIntoView({ 
+      behavior: 'smooth',
+      block: 'start'
+    });
+  };
+
+  return (
+    <div className="min-h-screen bg-white">
+      <Header />
+      <HeroSection onGetStarted={scrollToAnnouncements} />
+      <RecentAnnouncements />
+      <div ref={announcementsRef}>
+        <AnnouncementsSection />
+      </div>
+      <AboutSection />
+      <NewsletterSection />
+      <FAQ />
+      <Footer />
+    </div>
+  );
+};
+
+export default Index;

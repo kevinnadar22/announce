@@ -172,3 +172,13 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+node_modules/
+.DS_Store
+todo.txt
+
+# VSCode
+.vscode/
+
+# Cursor
+.cursorrules
