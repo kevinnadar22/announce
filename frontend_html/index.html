@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GovAnnounce - Government Announcements</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2E7D32',
+                        secondary: '#1565C0',
+                        background: '#F8FAFC',
+                        accent: '#E8F5E9',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #2E7D32 0%, #1565C0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        /* Added for news.html, but keeping for theme consistency if needed */
+        .magical-button {
+            background: linear-gradient(45deg, #2C5530, #1E3A8A);
+            background-size: 200% 200%;
+            animation: gradient 3s ease infinite;
+            transition: all 0.3s ease;
+        }
+        .magical-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(44, 85, 48, 0.2);
+        }
+        /* Custom gradients for lighter fade effect */
+        .fade-overlay-left {
+            background: linear-gradient(to right, rgba(232, 245, 233, 0.7), transparent);
+        }
+         .fade-overlay-right {
+            background: linear-gradient(to left, rgba(232, 245, 233, 0.7), transparent);
+        }
+    </style>
+</head>
+<body class="bg-background min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <!-- Left Section -->
+                <div class="flex items-center space-x-4">
+                    <div class="w-14 h-14 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center shadow-lg">
+                        <i class="fas fa-landmark text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-bold gradient-text">GovAnnounce</h1>
+                        <p class="text-sm text-gray-600">Empowering Citizens with Timely Information</p>
+                    </div>
+                </div>
+                
+                <!-- Right Section -->
+                <div class="relative">
+                    <select class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 hover:border-primary">
+                        <option value="en">English</option>
+                        <option value="hi">हिंदी</option>
+                        <option value="mr">मराठी</option>
+                        <option value="ta">தமிழ்</option>
+                        <option value="bn">বাংলা</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="bg-accent py-24">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-5xl font-bold gradient-text mb-8 drop-shadow-sm">Government Announcements</h2>
+            <p class="text-xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">Stay updated with the latest updates from every corner of governance. Your trusted source for official information.</p>
+            
+            <!-- Stats Section -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
+                <!-- Stat 1 -->
+                <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center">
+                    <i class="fas fa-chart-line text-primary text-3xl mb-3"></i>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-1">500+</h3>
+                    <p class="text-sm text-gray-600">Live Announcements</p>
+                </div>
+                <!-- Stat 2 -->
+                <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center">
+                    <i class="fas fa-users text-primary text-3xl mb-3"></i>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-1">25+</h3>
+                    <p class="text-sm text-gray-600">Ministries</p>
+                </div>
+                <!-- Stat 3 -->
+                <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center">
+                    <i class="fas fa-globe text-primary text-3xl mb-3"></i>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-1">10+</h3>
+                    <p class="text-sm text-gray-600">Languages</p>
+                </div>
+                <!-- Stat 4 -->
+                <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center text-center">
+                    <i class="fas fa-clock text-primary text-3xl mb-3"></i>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-1">24/7</h3>
+                    <p class="text-sm text-gray-600">Real-time Updates</p>
+                </div>
+            </div>
+
+            <button onclick="scrollToAnnouncements()" class="bg-gradient-to-r from-primary to-secondary text-white px-10 py-4 rounded-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                Search Announcements <i class="fas fa-arrow-right ml-2"></i>
+            </button>
+        </div>
+    </section>
+
+    <!-- Top Announcements and Recent Updates Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Top Announcements (Left Column) -->
+                <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+                    <div class="flex items-center mb-6">
+                        <i class="fas fa-chart-line text-primary text-2xl mr-3"></i>
+                        <h2 class="text-2xl font-bold text-gray-800">Top Announcements</h2>
+                    </div>
+                    
+                    <!-- Announcement Item 1 -->
+                    <div class="bg-accent rounded-lg p-4 mb-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="bg-primary text-white text-xs font-semibold px-2.5 py-0.5 rounded-full">TRENDING</span>
+                            <span class="text-gray-500 text-sm">2 hours ago</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Digital India Initiative: New Online Services Launched</h3>
+                        <div class="flex items-center text-sm text-gray-600 mb-3">
+                            <i class="fas fa-building mr-2 text-primary"></i>
+                            <span>Ministry of Electronics & IT</span>
+                        </div>
+                         <span class="text-gray-600 text-sm px-3 py-1 rounded-full border border-gray-300">Digital Services</span>
+                    </div>
+
+                    <!-- Announcement Item 2 -->
+                     <div class="bg-accent rounded-lg p-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="bg-primary text-white text-xs font-semibold px-2.5 py-0.5 rounded-full">TRENDING</span>
+                            <span class="text-gray-500 text-sm">4 hours ago</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-1">PM-KISAN Scheme: New Enrollment Window Opens</h3>
+                        <div class="flex items-center text-sm text-gray-600 mb-3">
+                            <i class="fas fa-building mr-2 text-primary"></i>
+                            <span>Ministry of Agriculture</span>
+                        </div>
+                         <span class="text-gray-600 text-sm px-3 py-1 rounded-full border border-gray-300">Schemes</span>
+                    </div>
+                </div>
+
+                <!-- Recent Updates (Right Column) -->
+                <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+                     <div class="flex items-center mb-6 text-primary">
+                        <i class="fas fa-clock text-2xl mr-3"></i>
+                        <h2 class="text-2xl font-bold text-gray-800">Recent Updates</h2>
+                    </div>
+
+                    <!-- Update Item 1 -->
+                    <div class="flex items-start pb-4 mb-4 border-b border-gray-200 last:border-b-0 last:mb-0 last:pb-0">
+                        <div class="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                        <div class="flex-grow">
+                            <span class="text-gray-500 text-sm">6 hours ago</span>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-1">National Health Mission Updates Released</h3>
+                            <div class="flex items-center text-sm text-gray-600">
+                                <i class="fas fa-building mr-2 text-primary"></i>
+                                <span>Ministry of Health</span>
+                            </div>
+                        </div>
+                        <span class="text-gray-600 text-sm px-3 py-1 rounded-full border border-gray-300 ml-4 flex-shrink-0">Health</span>
+                    </div>
+
+                    <!-- Update Item 2 -->
+                     <div class="flex items-start pb-4 mb-4 border-b border-gray-200 last:border-b-0 last:mb-0 last:pb-0">
+                         <div class="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                        <div class="flex-grow">
+                            <span class="text-gray-500 text-sm">8 hours ago</span>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-1">Skill Development Programs for Youth</h3>
+                             <div class="flex items-center text-sm text-gray-600">
+                                <i class="fas fa-building mr-2 text-primary"></i>
+                                <span>Ministry of Skill Development</span>
+                            </div>
+                        </div>
+                        <span class="text-gray-600 text-sm px-3 py-1 rounded-full border border-gray-300 ml-4 flex-shrink-0">Employment</span>
+                    </div>
+
+                    <!-- Update Item 3 -->
+                    <div class="flex items-start pb-4 mb-4 border-b border-gray-200 last:border-b-0 last:mb-0 last:pb-0">
+                         <div class="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                        <div class="flex-grow">
+                            <span class="text-gray-500 text-sm">12 hours ago</span>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-1">Environmental Protection Guidelines Updated</h3>
+                             <div class="flex items-center text-sm text-gray-600">
+                                <i class="fas fa-building mr-2 text-primary"></i>
+                                <span>Ministry of Environment</span>
+                            </div>
+                        </div>
+                        <span class="text-gray-600 text-sm px-3 py-1 rounded-full border border-gray-300 ml-4 flex-shrink-0">Policy</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Continue Reading Section -->
+    <section class="py-16 bg-accent">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold gradient-text mb-8">Continue Reading</h2>
+            <div class="relative overflow-hidden">
+                <div class="overflow-x-auto flex space-x-6 pb-6 scrollbar-hide">
+                    <!-- Reading Cards -->
+                    <div class="flex-none w-96 bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Infrastructure Development Plan</h3>
+                        <p class="text-gray-600 mb-4">Major infrastructure projects announced for urban development and rural connectivity, focusing on sustainable growth.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-sm">Infrastructure</span>
+                            <a href="news.html" class="text-primary hover:text-primary/80 transition-colors duration-200">
+                                Continue Reading <i class="fas fa-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="flex-none w-96 bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Agricultural Reforms</h3>
+                        <p class="text-gray-600 mb-4">New policies introduced to support farmers and modernize agricultural practices, ensuring food security.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm">Agriculture</span>
+                            <a href="news.html" class="text-primary hover:text-primary/80 transition-colors duration-200">
+                                Continue Reading <i class="fas fa-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="flex-none w-96 bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Technology Innovation Fund</h3>
+                        <p class="text-gray-600 mb-4">New funding opportunities for tech startups and research institutions to drive innovation and digital transformation.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm">Technology</span>
+                            <a href="news.html" class="text-primary hover:text-primary/80 transition-colors duration-200">
+                                Continue Reading <i class="fas fa-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- New dummy article card -->
+                    <div class="flex-none w-96 bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Environmental Protection Measures</h3>
+                        <p class="text-gray-600 mb-4">Government announces new measures to protect the environment and promote sustainable practices nationwide.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm">Environment</span>
+                            <a href="news.html" class="text-primary hover:text-primary/80 transition-colors duration-200">
+                                Continue Reading <i class="fas fa-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <button class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-200">
+                    <i class="fas fa-chevron-left text-gray-600"></i>
+                </button>
+                <button class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-200">
+                    <i class="fas fa-chevron-right text-gray-600"></i>
+                </button>
+                <div class="absolute inset-y-0 right-0 w-16 fade-overlay-right pointer-events-none"></div>
+                <div class="absolute inset-y-0 left-0 w-16 fade-overlay-left pointer-events-none"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- All Announcements Section -->
+    <section id="all-announcements" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold gradient-text mb-8">All Announcements</h2>
+            
+            <!-- Search Bar -->
+            <div class="max-w-3xl mx-auto mb-10">
+                <div class="relative">
+                    <input type="text" placeholder="Search announcements..." class="w-full px-6 py-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent shadow-sm">
+                    <button class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-primary transition-colors duration-200">
+                        <i class="fas fa-search text-xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="mb-10">
+                <h3 class="text-xl font-semibold text-gray-800 mb-6">Filter Announcements</h3>
+                
+                <!-- Category Buttons -->
+                <div class="flex flex-wrap gap-3 mb-8">
+                    <a href="#" class="px-5 py-2.5 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-all duration-200 flex items-center">
+                        <i class="fas fa-graduation-cap mr-2"></i>Education
+                    </a>
+                    <a href="#" class="px-5 py-2.5 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-all duration-200 flex items-center">
+                        <i class="fas fa-heartbeat mr-2"></i>Health
+                    </a>
+                    <a href="#" class="px-5 py-2.5 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-all duration-200 flex items-center">
+                        <i class="fas fa-briefcase mr-2"></i>Job
+                    </a>
+                    <a href="#" class="px-5 py-2.5 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-all duration-200 flex items-center">
+                        <i class="fas fa-bus mr-2"></i>Transport
+                    </a>
+                    <a href="#" class="px-5 py-2.5 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-all duration-200 flex items-center">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>Emergency
+                    </a>
+                    <a href="#" class="px-5 py-2.5 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-all duration-200 flex items-center">
+                        <i class="fas fa-home mr-2"></i>Housing
+                    </a>
+                    <a href="#" class="px-5 py-2.5 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-all duration-200 flex items-center">
+                        <i class="fas fa-seedling mr-2"></i>Agriculture
+                    </a>
+                </div>
+
+                <!-- Filter Dropdowns -->
+                <div class="flex flex-wrap justify-center lg:justify-between items-center gap-4 mb-10">
+                    <div class="relative w-full md:w-auto flex-grow">
+                        <i class="fas fa-map-marker-alt text-gray-500 absolute left-4 top-1/2 transform -translate-y-1/2"></i>
+                        <select class="w-full pl-10 pr-8 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent appearance-none">
+                            <option value="">All Locations</option>
+                            <option value="delhi">New Delhi</option>
+                            <option value="mumbai">Mumbai</option>
+                            <option value="chennai">Chennai</option>
+                            <option value="kolkata">Kolkata</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="relative w-full md:w-auto flex-grow">
+                        <i class="fas fa-building text-gray-500 absolute left-4 top-1/2 transform -translate-y-1/2"></i>
+                        <select class="w-full pl-10 pr-8 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent appearance-none">
+                            <option value="">All Ministries</option>
+                            <option value="health">Health</option>
+                            <option value="education">Education</option>
+                            <option value="finance">Finance</option>
+                            <option value="transport">Transport</option>
+                            <option value="agriculture">Agriculture</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="relative w-full md:w-auto flex-grow">
+                         <i class="fas fa-users text-gray-500 absolute left-4 top-1/2 transform -translate-y-1/2"></i>
+                        <select class="w-full pl-10 pr-8 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent appearance-none">
+                            <option value="">All Audiences</option>
+                            <option value="all">All Citizens</option>
+                            <option value="students">Students</option>
+                            <option value="business">Business</option>
+                            <option value="farmers">Farmers</option>
+                            <option value="professionals">Professionals</option>
+                        </select>
+                         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="relative w-full md:w-auto flex-grow">
+                        <i class="fas fa-clock text-gray-500 absolute left-4 top-1/2 transform -translate-y-1/2"></i>
+                        <select class="w-full pl-10 pr-8 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent appearance-none">
+                            <option value="">Any Time</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">Last Month</option>
+                            <option value="quarter">Last Quarter</option>
+                            <option value="year">Last Year</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Announcements List -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Announcement Items -->
+                <!-- Announcement Item 1 -->
+                <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+                     <span class="inline-block bg-accent text-primary text-xs font-semibold px-3 py-1 rounded-full mb-4">
+                        <i class="fas fa-globe mr-1"></i> 5 Languages
+                    </span>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3 leading-tight">Digital India Initiative: New Online Services Launched</h3>
+                    <p class="text-gray-600 mb-4 leading-relaxed">Government launches comprehensive digital services platform to streamline citizen interactions and reduce paperwork for government procedures. This initiative aims to digitize all...</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="text-gray-600 text-xs px-2.5 py-1 rounded-full border border-gray-300">Digital Services</span>
+                        <span class="text-gray-600 text-xs px-2.5 py-1 rounded-full border border-gray-300">Technology</span>
+                    </div>
+
+                    <div class="space-y-2 mb-4 text-gray-600 text-sm">
+                        <div class="flex items-center">
+                            <i class="fas fa-building mr-2 text-primary"></i>
+                            <span>Ministry of Electronics & IT</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2 text-primary"></i>
+                            <span>Delhi</span>
+                        </div>
+                         <div class="flex items-center">
+                             <i class="fas fa-users mr-2 text-primary"></i>
+                             <div class="flex flex-wrap gap-1">
+                                 <span class="text-gray-600 text-xs px-2.5 py-1 rounded-full border border-gray-300">Citizens</span>
+                                 <span class="text-gray-600 text-xs px-2.5 py-1 rounded-full border border-gray-300">Businesses</span>
+                             </div>
+                         </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-calendar-alt mr-2 text-primary"></i>
+                            <span>Dec 15, 2024 • 4:00 PM</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <span class="text-gray-700 text-sm mb-2 inline-block">Available in:</span>
+                         <div class="flex flex-wrap gap-2">
+                            <span class="text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-primary">English</span>
+                            <span class="text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-primary">Hindi</span>
+                             <span class="text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-primary">Tamil</span>
+                            <span class="text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-primary">Telugu</span>
+                            <span class="text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-primary">+1 more</span>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center mt-auto pt-4 border-t border-gray-100">
+                        <a href="news.html" class="text-primary hover:text-primary/80 transition-colors duration-200 flex items-center text-sm font-semibold">
+                            Read Full Announcement <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                         <a href="#" class="text-gray-500 hover:text-primary transition-colors duration-200">
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Announcement Item 2 -->
+                 <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+                     <span class="inline-block bg-accent text-primary text-xs font-semibold px-3 py-1 rounded-full mb-4">
+                        <i class="fas fa-globe mr-1"></i> 3 Languages
+                    </span>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3 leading-tight">PM-KISAN Scheme: New Enrollment Window Opens</h3>
+                    <p class="text-gray-600 mb-4 leading-relaxed">Farmers can now enroll for the PM-KISAN scheme through a new, simplified online window. The government aims to reach more eligible farmers nationwide...</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="text-gray-600 text-xs px-2.5 py-1 rounded-full border border-gray-300">Schemes</span>
+                        <span class="text-gray-600 text-xs px-2.5 py-1 rounded-full border border-gray-300">Agriculture</span>
+                    </div>
+
+                    <div class="space-y-2 mb-4 text-gray-600 text-sm">
+                        <div class="flex items-center">
+                            <i class="fas fa-building mr-2 text-primary"></i>
+                            <span>Ministry of Agriculture</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2 text-primary"></i>
+                            <span>Rural Areas</span>
+                        </div>
+                         <div class="flex items-center">
+                             <i class="fas fa-users mr-2 text-primary"></i>
+                             <div class="flex flex-wrap gap-1">
+                                 <span class="text-gray-600 text-xs px-2.5 py-1 rounded-full border border-gray-300">Farmers</span>
+                                 <span class="text-gray-600 text-xs px-2.5 py-1 rounded-full border border-gray-300">Rural Citizens</span>
+                             </div>
+                         </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-calendar-alt mr-2 text-primary"></i>
+                            <span>Dec 14, 2024 • 10:00 AM</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <span class="text-gray-700 text-sm mb-2 inline-block">Available in:</span>
+                         <div class="flex flex-wrap gap-2">
+                            <span class="text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-primary">English</span>
+                            <span class="text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-primary">Hindi</span>
+                             <span class="text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-primary">Marathi</span>
+                        </div>
+                        <a href="#" class="text-primary hover:text-primary/80 transition-colors duration-200 flex items-center">
+                            View Details <i class="fas fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Announcement Item 3 -->
+                <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+                     <span class="inline-block bg-accent text-primary text-xs font-semibold px-3 py-1 rounded-full mb-4">
+                        <i class="fas fa-globe mr-1"></i> 7 Languages
+                    </span>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3 leading-tight">National Health Mission: Focus on Rural Healthcare</h3>
+                    <p class="text-gray-600 mb-4 leading-relaxed">The National Health Mission is prioritizing the enhancement of healthcare infrastructure and services in rural areas to ensure equitable access to medical care...</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="text-gray-600 text-xs px-2.5 py-1 rounded-full border border-gray-300">Health</span>
+                        <span class="text-gray-600 text-xs px-2.5 py-1 rounded-full border border-gray-300">Rural Development</span>
+                    </div>
+
+                    <div class="space-y-2 mb-4 text-gray-600 text-sm">
+                        <div class="flex items-center">
+                            <i class="fas fa-building mr-2 text-primary"></i>
+                            <span>Ministry of Health</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2 text-primary"></i>
+                            <span>Nationwide (Rural)</span>
+                        </div>
+                         <div class="flex items-center">
+                             <i class="fas fa-users mr-2 text-primary"></i>
+                             <div class="flex flex-wrap gap-1">
+                                 <span class="text-gray-600 text-xs px-2.5 py-1 rounded-full border border-gray-300">Rural Citizens</span>
+                                 <span class="text-gray-600 text-xs px-2.5 py-1 rounded-full border border-gray-300">Healthcare Professionals</span>
+                             </div>
+                         </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-calendar-alt mr-2 text-primary"></i>
+                            <span>Dec 13, 2024 • 2:30 PM</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <span class="text-gray-700 text-sm mb-2 inline-block">Available in:</span>
+                         <div class="flex flex-wrap gap-2">
+                            <span class="text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-primary">English</span>
+                            <span class="text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-primary">Hindi</span>
+                             <span class="text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-primary">Tamil</span>
+                             <span class="text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-primary">Bengali</span>
+                             <span class="text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-primary">Kannada</span>
+                             <span class="text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-primary">Odia</span>
+                             <span class="text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-primary">+1 more</span>
+                        </div>
+                        <a href="#" class="text-primary hover:text-primary/80 transition-colors duration-200 flex items-center">
+                            View Details <i class="fas fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Announcement Item 4 -->
+                 <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+                     <span class="inline-block bg-accent text-primary text-xs font-semibold px-3 py-1 rounded-full mb-4">
+                        <i class="fas fa-globe mr-1"></i> 4 Languages
+                    </span>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3 leading-tight">New Education Policy Implementation Updates</h3>
+                    <p class="text-gray-600 mb-4 leading-relaxed">Updates on the implementation of the new national education policy, focusing on curriculum changes and teacher training programs...</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="text-gray-600 text-xs px-2.5 py-1 rounded-full border border-gray-300">Education</span>
+                        <span class="text-gray-600 text-xs px-2.5 py-1 rounded-full border border-gray-300">Policy</span>
+                    </div>
+
+                    <div class="space-y-2 mb-4 text-gray-600 text-sm">
+                        <div class="flex items-center">
+                            <i class="fas fa-building mr-2 text-primary"></i>
+                            <span>Ministry of Education</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2 text-primary"></i>
+                            <span>Nationwide</span>
+                        </div>
+                         <div class="flex items-center">
+                             <i class="fas fa-users mr-2 text-primary"></i>
+                             <div class="flex flex-wrap gap-1">
+                                 <span class="text-gray-600 text-xs px-2.5 py-1 rounded-full border border-gray-300">Students</span>
+                                 <span class="text-gray-600 text-xs px-2.5 py-1 rounded-full border border-gray-300">Teachers</span>
+                                  <span class="text-gray-600 text-xs px-2.5 py-1 rounded-full border border-gray-300">Parents</span>
+                             </div>
+                         </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-calendar-alt mr-2 text-primary"></i>
+                            <span>Dec 12, 2024 • 11:00 AM</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <span class="text-gray-700 text-sm mb-2 inline-block">Available in:</span>
+                         <div class="flex flex-wrap gap-2">
+                            <span class="text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-primary">English</span>
+                            <span class="text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-primary">Hindi</span>
+                             <span class="text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-primary">Telugu</span>
+                            <span class="text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-primary">Urdu</span>
+                        </div>
+                        <a href="#" class="text-primary hover:text-primary/80 transition-colors duration-200 flex items-center">
+                            View Details <i class="fas fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Announcement Item 5 -->
+                 <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+                     <span class="inline-block bg-accent text-primary text-xs font-semibold px-3 py-1 rounded-full mb-4">
+                        <i class="fas fa-globe mr-1"></i> 6 Languages
+                    </span>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3 leading-tight">Economic Survey Report Released</h3>
+                    <p class="text-gray-600 mb-4 leading-relaxed">The annual economic survey report has been released, providing a detailed analysis of the nation's economic performance and outlook for the coming year...</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="text-gray-600 text-xs px-2.5 py-1 rounded-full border border-gray-300">Finance</span>
+                        <span class="text-gray-600 text-xs px-2.5 py-1 rounded-full border border-gray-300">Economy</span>
+                    </div>
+
+                    <div class="space-y-2 mb-4 text-gray-600 text-sm">
+                        <div class="flex items-center">
+                            <i class="fas fa-building mr-2 text-primary"></i>
+                            <span>Ministry of Finance</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2 text-primary"></i>
+                            <span>Nationwide</span>
+                        </div>
+                         <div class="flex items-center">
+                             <i class="fas fa-users mr-2 text-primary"></i>
+                             <div class="flex flex-wrap gap-1">
+                                 <span class="text-gray-600 text-xs px-2.5 py-1 rounded-full border border-gray-300">Economists</span>
+                                 <span class="text-gray-600 text-xs px-2.5 py-1 rounded-full border border-gray-300">Businesses</span>
+                                  <span class="text-gray-600 text-xs px-2.5 py-1 rounded-full border border-gray-300">Public</span>
+                             </div>
+                         </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-calendar-alt mr-2 text-primary"></i>
+                            <span>Dec 11, 2024 • 9:00 AM</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <span class="text-gray-700 text-sm mb-2 inline-block">Available in:</span>
+                         <div class="flex flex-wrap gap-2">
+                            <span class="text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-primary">English</span>
+                            <span class="text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-primary">Hindi</span>
+                             <span class="text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-primary">Marathi</span>
+                            <span class="text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-primary">Tamil</span>
+                             <span class="text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-primary">Telugu</span>
+                            <span class="text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-primary">+1 more</span>
+                        </div>
+                        <a href="#" class="text-primary hover:text-primary/80 transition-colors duration-200 flex items-center">
+                            View Details <i class="fas fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Announcement Item 6 -->
+                 <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+                     <span class="inline-block bg-accent text-primary text-xs font-semibold px-3 py-1 rounded-full mb-4">
+                        <i class="fas fa-globe mr-1"></i> 8 Languages
+                    </span>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3 leading-tight">New Environmental Protection Guidelines Issued</h3>
+                    <p class="text-gray-600 mb-4 leading-relaxed">The Ministry of Environment has issued updated guidelines for industrial emissions and waste management to combat pollution and promote sustainability...</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="text-gray-600 text-xs px-2.5 py-1 rounded-full border border-gray-300">Environment</span>
+                        <span class="text-gray-600 text-xs px-2.5 py-1 rounded-full border border-gray-300">Regulations</span>
+                    </div>
+
+                    <div class="space-y-2 mb-4 text-gray-600 text-sm">
+                        <div class="flex items-center">
+                            <i class="fas fa-building mr-2 text-primary"></i>
+                            <span>Ministry of Environment</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2 text-primary"></i>
+                            <span>Nationwide</span>
+                        </div>
+                         <div class="flex items-center">
+                             <i class="fas fa-users mr-2 text-primary"></i>
+                             <div class="flex flex-wrap gap-1">
+                                 <span class="text-gray-600 text-xs px-2.5 py-1 rounded-full border border-gray-300">Industry</span>
+                                 <span class="text-gray-600 text-xs px-2.5 py-1 rounded-full border border-gray-300">Citizens</span>
+                             </div>
+                         </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-calendar-alt mr-2 text-primary"></i>
+                            <span>Dec 10, 2024 • 3:00 PM</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <span class="text-gray-700 text-sm mb-2 inline-block">Available in:</span>
+                         <div class="flex flex-wrap gap-2">
+                            <span class="text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-primary">English</span>
+                            <span class="text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-primary">Hindi</span>
+                             <span class="text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-primary">Marathi</span>
+                            <span class="text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-primary">Tamil</span>
+                             <span class="text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-primary">Telugu</span>
+                            <span class="text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-primary">Bengali</span>
+                            <span class="text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-primary">Kannada</span>
+                            <span class="text-primary text-xs font-semibold px-2.5 py-1 rounded-full border border-primary">+1 more</span>
+                        </div>
+                        <a href="#" class="text-primary hover:text-primary/80 transition-colors duration-200 flex items-center">
+                            View Details <i class="fas fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Pagination -->
+            <div class="flex justify-center items-center space-x-3 mt-12">
+                <button class="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-all duration-200">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="px-4 py-2 rounded-lg bg-primary text-white">1</button>
+                <button class="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-all duration-200">2</button>
+                <button class="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-all duration-200">3</button>
+                <span class="px-2">...</span>
+                <button class="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-all duration-200">10</button>
+                <button class="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-all duration-200">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-16">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+                <div>
+                    <h3 class="text-xl font-semibold mb-6">About GovAnnounce</h3>
+                    <p class="text-gray-400 leading-relaxed">Your trusted source for government announcements and updates. We provide timely and accurate information to keep citizens informed about important developments.</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-6">Contact</h3>
+                    <div class="space-y-4">
+                        <p class="text-gray-400 flex items-center">
+                            <i class="fas fa-envelope mr-3"></i>
+                            info@govannounce.gov
+                        </p>
+                        <p class="text-gray-400 flex items-center">
+                            <i class="fas fa-phone mr-3"></i>
+                            1800-XXX-XXXX
+                        </p>
+                        <p class="text-gray-400 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-3"></i>
+                            New Delhi, India
+                        </p>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-6">Quick Links</h3>
+                    <ul class="space-y-4">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200 flex items-center">
+                            <i class="fas fa-chevron-right mr-2 text-sm"></i>Services
+                        </a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200 flex items-center">
+                            <i class="fas fa-chevron-right mr-2 text-sm"></i>Departments
+                        </a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200 flex items-center">
+                            <i class="fas fa-chevron-right mr-2 text-sm"></i>FAQs
+                        </a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200 flex items-center">
+                            <i class="fas fa-chevron-right mr-2 text-sm"></i>Privacy Policy
+                        </a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-6">Follow Us</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200 bg-gray-700 p-3 rounded-full hover:bg-gray-600">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200 bg-gray-700 p-3 rounded-full hover:bg-gray-600">
+                            <i class="fab fa-facebook text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200 bg-gray-700 p-3 rounded-full hover:bg-gray-600">
+                            <i class="fab fa-linkedin text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200 bg-gray-700 p-3 rounded-full hover:bg-gray-600">
+                            <i class="fab fa-instagram text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-12 pt-8 text-center text-gray-400">
+                <p>© 2025 GovAnnounce. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html> 

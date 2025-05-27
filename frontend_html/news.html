@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GovAnnounce - Government Announcements</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2E7D32',
+                        secondary: '#1565C0',
+                        background: '#F8FAFC',
+                        accent: '#E8F5E9',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #2E7D32 0%, #1565C0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        /* Added for news.html, but keeping for theme consistency if needed */
+        .magical-button {
+            background: linear-gradient(45deg, #2C5530, #1E3A8A);
+            background-size: 200% 200%;
+            animation: gradient 3s ease infinite;
+            transition: all 0.3s ease;
+        }
+        .magical-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(44, 85, 48, 0.2);
+        }
+        /* Custom gradients for lighter fade effect */
+        .fade-overlay-left {
+            background: linear-gradient(to right, rgba(232, 245, 233, 0.7), transparent);
+        }
+         .fade-overlay-right {
+            background: linear-gradient(to left, rgba(232, 245, 233, 0.7), transparent);
+        }
+    </style>
+</head>
+<body class="bg-background min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <!-- Left Section -->
+                <div class="flex items-center space-x-4">
+                    <div class="w-14 h-14 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center shadow-lg">
+                        <i class="fas fa-landmark text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-bold gradient-text">GovAnnounce</h1>
+                        <p class="text-sm text-gray-600">Empowering Citizens with Timely Information</p>
+                    </div>
+                </div>
+
+                <!-- Right Section -->
+                <div class="relative">
+                    <a href="index.html" class="flex items-center space-x-2 px-5 py-2.5 rounded-lg bg-gradient-to-r from-primary to-secondary text-white hover:shadow-lg transition-all duration-300">
+                        <i class="fas fa-home"></i>
+                        <span class="font-medium">Home</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 pt-24 pb-16">
+        <div class="flex flex-col lg:flex-row gap-10">
+            <!-- Right Column - Main Article -->
+            <div class="lg:w-2/3">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                    <!-- Language Dropdown -->
+                    <div class="flex justify-end mb-6">
+                        <select class="bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gov-green cursor-pointer">
+                            <option value="en">English</option>
+                            <option value="hi">Hindi</option>
+                            <option value="mr">Marathi</option>
+                        </select>
+                    </div>
+
+                    <!-- Article Title -->
+                    <h2 class="text-3xl font-bold gradient-text mb-6 leading-tight">New Infrastructure Development Plan Announced for Urban Areas</h2>
+                    
+                    <!-- Article Details -->
+                    <div class="flex items-center text-sm text-gray-600 mb-8 space-x-4">
+                        <div class="flex items-center">
+                            <i class="fas fa-building text-gov-green mr-2"></i>
+                            <span>Ministry of Urban Development</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-calendar text-gov-green mr-2"></i>
+                            <span>May 25, 2025</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-clock text-gov-green mr-2"></i>
+                            <span>4 min read</span>
+                        </div>
+                    </div>
+
+                    <!-- Summary Button -->
+                    <button class="w-48 magical-button text-white py-3 rounded-xl mb-6 font-medium">
+                        <span class="flex items-center justify-center space-x-2">
+                            <i class="fas fa-list-ul"></i>
+                            <span>View Summary</span>
+                        </span>
+                    </button>
+
+                    <!-- Summary Content (Hidden by default) -->
+                    <div class="max-h-0 overflow-hidden transition-all duration-500">
+                        <div class="bg-gradient-to-br from-accent to-white rounded-xl p-6 mb-6 shadow-sm">
+                            <h3 class="text-lg font-semibold gradient-text mb-4">Key Points</h3>
+                            <ul class="space-y-3 text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-primary mt-1 mr-3"></i>
+                                    <span>Major infrastructure development plan announced</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-primary mt-1 mr-3"></i>
+                                    <span>Focus on sustainable urban development</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-primary mt-1 mr-3"></i>
+                                    <span>Investment of ₹50,000 crores over 5 years</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-primary mt-1 mr-3"></i>
+                                    <span>Smart city integration in 100 cities</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Toggle Buttons -->
+                    <div id="toggle-group" class="flex w-max mb-8 border-2 border-primary rounded-xl overflow-hidden bg-white">
+                        <button id="btn-simplified" class="px-8 py-2 font-semibold text-primary bg-accent focus:outline-none transition-all duration-200">
+                            Simplified
+                        </button>
+                        <button id="btn-oversimplified" class="px-8 py-2 font-semibold text-primary bg-white focus:outline-none transition-all duration-200">
+                            Over-simplified
+                        </button>
+                    </div>
+
+                    <!-- Listen Section -->
+                    <div class="bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl p-6">
+                        <div class="flex items-center space-x-3 text-gov-green mb-4">
+                            <i class="fas fa-volume-up text-lg"></i>
+                            <span class="font-medium">Listen to the Announcement</span>
+                        </div>
+                        <p class="text-gray-700 leading-relaxed mb-4">
+                            The Ministry of Urban Development has announced a comprehensive infrastructure development plan aimed at transforming urban areas across the country. This initiative focuses on sustainable development, smart city integration, and improved public transportation systems. The plan includes significant investments in road networks, public transit, and green spaces, with a particular emphasis on environmental sustainability and citizen welfare.
+                        </p>
+                        <p class="text-gray-700 leading-relaxed mb-4">
+                            The government aims to collaborate with local authorities and private stakeholders to ensure the effective implementation of the plan. Key performance indicators will be established to monitor progress and ensure transparency throughout the process. Citizens are encouraged to participate in public consultations and provide feedback on proposed projects.
+                        </p>
+                        <p class="text-gray-700 leading-relaxed mb-4">
+                            In addition to infrastructure upgrades, the plan emphasizes the importance of digital transformation in urban management. Smart sensors, data analytics, and real-time monitoring will be deployed to optimize resource allocation and improve service delivery. The initiative is expected to create thousands of jobs and boost economic growth in urban centers.
+                        </p>
+                        <p class="text-gray-700 leading-relaxed mb-4">
+                            The Ministry has also announced a series of awareness campaigns to educate citizens about the benefits of sustainable urban development. Further details and timelines for project rollouts will be shared in upcoming announcements.
+                        </p>
+                        <p class="text-gray-700 leading-relaxed mb-4">
+                            The plan will be implemented in multiple phases, starting with a pilot program in select metropolitan cities. Lessons learned from these pilot projects will inform the nationwide rollout. The government is committed to ensuring that all urban residents benefit from improved infrastructure, regardless of their socio-economic status. Special attention will be given to affordable housing, clean water supply, and efficient waste management systems.
+                        </p>
+                        <p class="text-gray-700 leading-relaxed mb-4">
+                            Stakeholder engagement is a key component of the initiative. Regular meetings will be held with representatives from municipal corporations, resident welfare associations, and industry experts. The Ministry will also launch an online portal where citizens can track project progress, submit suggestions, and report issues in real time. This digital platform aims to foster transparency and accountability at every stage of the project.
+                        </p>
+                        <p class="text-gray-700 leading-relaxed mb-4">
+                            Environmental sustainability remains at the core of the development plan. The government will prioritize the use of eco-friendly construction materials, promote green building standards, and encourage the adoption of renewable energy sources. Urban green spaces, such as parks and community gardens, will be expanded to enhance the quality of life for residents and support biodiversity.
+                        </p>
+                        <p class="text-gray-700 leading-relaxed mb-4">
+                            The Ministry is also working closely with international organizations to adopt global best practices in urban planning and management. Technical assistance and funding from development partners will help accelerate the implementation of key projects. Training programs will be organized for government officials and urban planners to build capacity and ensure the successful execution of the plan.
+                        </p>
+                        <p class="text-gray-700 leading-relaxed mb-4">
+                            Public safety and disaster resilience are integral to the new infrastructure strategy. The plan includes the installation of advanced surveillance systems, improved street lighting, and the development of emergency response protocols. Urban areas will be equipped to better withstand natural disasters such as floods, earthquakes, and heatwaves, ensuring the safety and well-being of all citizens.
+                        </p>
+                        <p class="text-gray-700 leading-relaxed mb-4">
+                            The government recognizes the importance of inclusive growth and will ensure that marginalized communities are not left behind. Special schemes will be introduced to support the needs of women, children, the elderly, and persons with disabilities. Accessible public spaces, barrier-free transportation, and targeted social welfare programs will be integral to the overall development framework.
+                        </p>
+                        <p class="text-gray-700 leading-relaxed mb-4">
+                            In conclusion, the Ministry of Urban Development's new infrastructure plan represents a bold step towards building resilient, sustainable, and inclusive cities for the future. The government invites all citizens to stay informed, get involved, and contribute to the nation's urban transformation journey. Regular updates will be provided through official channels as the plan progresses.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Left Column - Suggested Articles -->
+            <div class="lg:w-1/3">
+                <div class="sticky top-32">
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                        <h3 class="text-xl font-bold gradient-text mb-6">Suggested Articles</h3>
+                        <div class="space-y-5">
+                            <!-- Article Cards -->
+                            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-all duration-300 cursor-pointer group">
+                                <h4 class="font-semibold text-gray-900 mb-2 group-hover:text-gov-green transition-colors">New Education Policy Implementation</h4>
+                                <div class="flex items-center text-sm text-gov-green mb-3">
+                                    <i class="fas fa-building mr-2"></i>
+                                    <span>Ministry of Education</span>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-calendar mr-2"></i>
+                                        May 24, 2025
+                                    </span>
+                                    <span class="mx-3">•</span>
+                                    <span class="flex items-center">
+                                        <i class="fas fa-clock mr-2"></i>
+                                        3 min read
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-all duration-300 cursor-pointer group">
+                                <h4 class="font-semibold text-gray-900 mb-2 group-hover:text-gov-green transition-colors">Healthcare Infrastructure Update</h4>
+                                <div class="flex items-center text-sm text-gov-green mb-3">
+                                    <i class="fas fa-building mr-2"></i>
+                                    <span>Ministry of Health</span>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-calendar mr-2"></i>
+                                        May 23, 2025
+                                    </span>
+                                    <span class="mx-3">•</span>
+                                    <span class="flex items-center">
+                                        <i class="fas fa-clock mr-2"></i>
+                                        5 min read
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-all duration-300 cursor-pointer group">
+                                <h4 class="font-semibold text-gray-900 mb-2 group-hover:text-gov-green transition-colors">Agricultural Reforms Overview</h4>
+                                <div class="flex items-center text-sm text-gov-green mb-3">
+                                    <i class="fas fa-building mr-2"></i>
+                                    <span>Ministry of Agriculture</span>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-calendar mr-2"></i>
+                                        May 22, 2025
+                                    </span>
+                                    <span class="mx-3">•</span>
+                                    <span class="flex items-center">
+                                        <i class="fas fa-clock mr-2"></i>
+                                        4 min read
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-all duration-300 cursor-pointer group">
+                                <h4 class="font-semibold text-gray-900 mb-2 group-hover:text-gov-green transition-colors">Digital India Progress Report</h4>
+                                <div class="flex items-center text-sm text-gov-green mb-3">
+                                    <i class="fas fa-building mr-2"></i>
+                                    <span>Ministry of Electronics</span>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-calendar mr-2"></i>
+                                        May 21, 2025
+                                    </span>
+                                    <span class="mx-3">•</span>
+                                    <span class="flex items-center">
+                                        <i class="fas fa-clock mr-2"></i>
+                                        6 min read
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-all duration-300 cursor-pointer group">
+                                <h4 class="font-semibold text-gray-900 mb-2 group-hover:text-gov-green transition-colors">Environmental Protection Measures</h4>
+                                <div class="flex items-center text-sm text-gov-green mb-3">
+                                    <i class="fas fa-building mr-2"></i>
+                                    <span>Ministry of Environment</span>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-calendar mr-2"></i>
+                                        May 20, 2025
+                                    </span>
+                                    <span class="mx-3">•</span>
+                                    <span class="flex items-center">
+                                        <i class="fas fa-clock mr-2"></i>
+                                        4 min read
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-16">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+                <div>
+                    <h3 class="text-xl font-semibold mb-6">About GovAnnounce</h3>
+                    <p class="text-gray-400 leading-relaxed">Your trusted source for government announcements and updates. We provide timely and accurate information to keep citizens informed about important developments.</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-6">Contact</h3>
+                    <div class="space-y-4">
+                        <p class="text-gray-400 flex items-center">
+                            <i class="fas fa-envelope mr-3"></i>
+                            info@govannounce.gov
+                        </p>
+                        <p class="text-gray-400 flex items-center">
+                            <i class="fas fa-phone mr-3"></i>
+                            1800-XXX-XXXX
+                        </p>
+                        <p class="text-gray-400 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-3"></i>
+                            New Delhi, India
+                        </p>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-6">Quick Links</h3>
+                    <ul class="space-y-4">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200 flex items-center">
+                            <i class="fas fa-chevron-right mr-2 text-sm"></i>Services
+                        </a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200 flex items-center">
+                            <i class="fas fa-chevron-right mr-2 text-sm"></i>Departments
+                        </a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200 flex items-center">
+                            <i class="fas fa-chevron-right mr-2 text-sm"></i>FAQs
+                        </a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200 flex items-center">
+                            <i class="fas fa-chevron-right mr-2 text-sm"></i>Privacy Policy
+                        </a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-6">Follow Us</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200 bg-gray-700 p-3 rounded-full hover:bg-gray-600">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200 bg-gray-700 p-3 rounded-full hover:bg-gray-600">
+                            <i class="fab fa-facebook text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200 bg-gray-700 p-3 rounded-full hover:bg-gray-600">
+                            <i class="fab fa-linkedin text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200 bg-gray-700 p-3 rounded-full hover:bg-gray-600">
+                            <i class="fab fa-instagram text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-12 pt-8 text-center text-gray-400">
+                <p>© 2025 GovAnnounce. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Toggle summary visibility with improved animation
+        const summaryButton = document.querySelector('.magical-button');
+        const summaryContent = document.querySelector('.max-h-0');
+        
+        summaryButton.addEventListener('click', () => {
+            summaryContent.classList.toggle('max-h-0');
+            summaryContent.classList.toggle('max-h-[300px]');
+            
+            // Toggle button text
+            const buttonText = summaryButton.querySelector('span');
+            if (summaryContent.classList.contains('max-h-0')) {
+                buttonText.innerHTML = '<i class="fas fa-list-ul"></i><span>View Summary</span>';
+            } else {
+                buttonText.innerHTML = '<i class="fas fa-times"></i><span>Hide Summary</span>';
+            }
+        });
+
+        // Toggle buttons functionality for pill group
+        const btnSimplified = document.getElementById('btn-simplified');
+        const btnOversimplified = document.getElementById('btn-oversimplified');
+        
+        btnSimplified.addEventListener('click', () => {
+            btnSimplified.classList.add('bg-accent');
+            btnSimplified.classList.remove('bg-white');
+            btnOversimplified.classList.remove('bg-accent');
+            btnOversimplified.classList.add('bg-white');
+        });
+        
+        btnOversimplified.addEventListener('click', () => {
+            btnOversimplified.classList.add('bg-accent');
+            btnOversimplified.classList.remove('bg-white');
+            btnSimplified.classList.remove('bg-accent');
+            btnSimplified.classList.add('bg-white');
+        });
+    </script>
+</body>
+</html> 
