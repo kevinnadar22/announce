@@ -502,9 +502,10 @@ const AnnouncementDetail = () => {
                         {originalTextData && originalTextData.results.length > 0 ? (
                           renderPlainContent(originalTextData.results)
                         ) : (
-                          <div className="whitespace-pre-line text-gray-700 leading-relaxed text-lg bg-gray-50/30 p-6 rounded-xl border-l-4 border-gray-500 transition-all duration-300">
-                            {pressRelease.original_text}
-                          </div>
+                          <div 
+                            className="prose prose-lg prose-gray max-w-none text-gray-700 leading-relaxed bg-gray-50/30 p-6 rounded-xl border-l-4 border-gray-500 transition-all duration-300"
+                            dangerouslySetInnerHTML={{ __html: pressRelease.original_text }}
+                          />
                         )}
                       </div>
                     )}
