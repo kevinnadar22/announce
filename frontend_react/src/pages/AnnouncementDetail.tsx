@@ -288,31 +288,31 @@ const AnnouncementDetail = () => {
               
               <div className="relative z-10">
                 {/* Top section with Ministry Badge and Language Selector */}
-                <div className="flex justify-between items-start mb-6">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-6">
                   <div>
-                    <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">
-                      <Building2 className="h-4 w-4 mr-2" />
-                      {pressRelease.ministry_name}
+                    <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">
+                      <Building2 className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5" />
+                      <span className="truncate max-w-[200px] sm:max-w-none">{pressRelease.ministry_name}</span>
                     </span>
                   </div>
                   
-                  {/* Language Selector - Moved to top-right */}
-                  <div className="flex items-center space-x-2 bg-white/80 backdrop-blur-sm rounded-lg border border-emerald-200 px-3 py-2 shadow-sm">
-                    <Globe className="h-4 w-4 text-emerald-600" />
+                  {/* Language Selector - Responsive */}
+                  <div className="flex items-center space-x-1.5 bg-white/80 backdrop-blur-sm rounded-lg border border-emerald-200 px-2.5 py-1.5 shadow-sm w-fit">
+                    <Globe className="h-3 w-3 sm:h-4 sm:w-4 text-emerald-600 flex-shrink-0" />
                     <Select value={selectedLanguage} onValueChange={handleLanguageChange}>
-                      <SelectTrigger className="w-36 h-8 border-0 bg-transparent focus:ring-0 text-sm">
-                        <SelectValue placeholder="Select language" />
+                      <SelectTrigger className="w-28 sm:w-32 h-6 sm:h-8 border-0 bg-transparent focus:ring-0 text-xs sm:text-sm p-0">
+                        <SelectValue placeholder="Language" />
                       </SelectTrigger>
                       <SelectContent>
                         {availableLanguages.map((languageCode, index) => (
-                          <SelectItem key={index} value={languageCode}>
+                          <SelectItem key={index} value={languageCode} className="text-xs sm:text-sm">
                             {decodeLanguage(languageCode)}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                     {isTransitioning && (
-                      <Loader2 className="h-3 w-3 animate-spin text-emerald-600" />
+                      <Loader2 className="h-2.5 w-2.5 sm:h-3 sm:w-3 animate-spin text-emerald-600 flex-shrink-0" />
                     )}
                   </div>
                 </div>
@@ -540,19 +540,19 @@ const AnnouncementDetail = () => {
                 <CardTitle className="text-xl">Source Information</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="flex items-center justify-between">
-                  <div className="space-y-3">
-                    <p className="text-gray-600">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div className="space-y-3 flex-1">
+                    <p className="text-gray-600 text-sm sm:text-base">
                       <span className="font-semibold text-gray-900">Published by:</span> {pressRelease.pib_hq}
                     </p>
-                    <p className="text-gray-600">
+                    <p className="text-gray-600 text-sm sm:text-base">
                       <span className="font-semibold text-gray-900">Last Updated:</span> {formatDate(pressRelease.updated_at)}
                     </p>
                   </div>
-                  <Button variant="outline" asChild className="border-emerald-200 text-emerald-700 hover:bg-emerald-50">
+                  <Button variant="outline" asChild className="border-emerald-200 text-emerald-700 hover:bg-emerald-50 w-full sm:w-auto">
                     <a href={pressRelease.source_url} target="_blank" rel="noopener noreferrer">
                       <ExternalLink className="h-4 w-4 mr-2" />
-                      View Original Source
+                      <span className="truncate">View Original Source</span>
                     </a>
                   </Button>
                 </div>

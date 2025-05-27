@@ -72,7 +72,7 @@ const HeroSection = ({ onGetStarted }: HeroSectionProps) => {
             <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 border border-emerald-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
               <Globe className="h-10 w-10 text-emerald-600 mx-auto mb-4" />
               <h3 className="font-semibold text-gray-900 mb-2">Multilingual Support</h3>
-              <p className="text-sm text-gray-600">Available in 15+ regional languages with real-time translation</p>
+              <p className="text-sm text-gray-600">Available in 11+ regional languages with real-time translation</p>
             </div>
             <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 border border-emerald-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
               <Zap className="h-10 w-10 text-green-600 mx-auto mb-4" />
