@@ -37,6 +37,7 @@ ALLOWED_HOSTS = list(config("ALLOWED_HOSTS", default="").split(","))
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",  # React dev server
+    "https://announce-sage.vercel.app",
 ]
 # Application definition
 
