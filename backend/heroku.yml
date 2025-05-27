@@ -2,4 +2,4 @@ build:
   docker:
     web: Dockerfile
 run:
-  web: npm start 
+  web: gunicorn --bind 0.0.0.0:$PORT --workers 3 --worker-class sync --timeout 30 --keep-alive 2 --max-requests 1000 --max-requests-jitter 100 --log-level info api.wsgi:application
