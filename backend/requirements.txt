@@ -22,3 +22,4 @@ psycopg2-binary==2.9.9
 google-genai==1.16.1
 pymongo==3.11.4
 dnspython==2.6.1
+whitenoise==6.9.0 
