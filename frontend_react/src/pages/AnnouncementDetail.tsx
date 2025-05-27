@@ -474,20 +474,22 @@ const AnnouncementDetail = () => {
               </CardHeader>
               <CardContent>
                 <Tabs defaultValue="original" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2 mb-8 bg-emerald-50 p-1 h-auto">
+                  <TabsList className="grid w-full grid-cols-2 mb-8 bg-emerald-50 p-2 h-auto gap-2 rounded-xl">
                     <TabsTrigger 
                       value="original" 
-                      className="flex items-center gap-2 text-base py-4 px-6 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:border-emerald-700 transition-all duration-200 hover:bg-emerald-100"
+                      className="flex items-center gap-2 text-sm sm:text-base py-3 px-4 sm:px-6 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-md data-[state=inactive]:text-emerald-700 data-[state=inactive]:hover:bg-emerald-100 transition-all duration-200 rounded-lg font-medium"
                     >
                       <Info className="h-4 w-4" />
-                      Original Text
+                      <span className="hidden sm:inline">Simplified Version</span>
+                      <span className="sm:hidden">Simplified</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="simplified" 
-                      className="flex items-center gap-2 text-base py-4 px-6 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:border-emerald-700 transition-all duration-200 hover:bg-emerald-100"
+                      className="flex items-center gap-2 text-sm sm:text-base py-3 px-4 sm:px-6 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-md data-[state=inactive]:text-emerald-700 data-[state=inactive]:hover:bg-emerald-100 transition-all duration-200 rounded-lg font-medium"
                     >
                       <Lightbulb className="h-4 w-4" />
-                      Simplified Version
+                      <span className="hidden sm:inline">Kid's Version</span>
+                      <span className="sm:hidden">Kid's</span>
                     </TabsTrigger>
                   </TabsList>
                   
