@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  # Django web application
+  web:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    command: gunicorn --bind 0.0.0.0:8000 --workers 3 --worker-class sync --timeout 30 --keep-alive 2 --max-requests 1000 --max-requests-jitter 100 --log-level info api.wsgi:application
+
+  # Celery worker
+  celery-worker:
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    command: celery -A api worker --loglevel=info --concurrency=4 -E
+
+  # Celery beat scheduler
+  celery-beat:
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    command: celery -A api beat --loglevel=info
+
+  # Flower - Celery monitoring tool
+  flower:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "5555:5555"
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    command: celery -A api flower --port=5555 --address=0.0.0.0 --basic_auth=admin:123456 --loglevel=info

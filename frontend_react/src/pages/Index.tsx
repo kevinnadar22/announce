@@ -4,7 +4,6 @@ import HeroSection from "@/components/HeroSection";
 import RecentAnnouncements from "@/components/RecentAnnouncements";
 import AnnouncementsSection from "@/components/AnnouncementsSection";
 import AboutSection from "@/components/AboutSection";
-import NewsletterSection from "@/components/NewsletterSection";
 import FAQ from "@/components/FAQ";
 import Footer from "@/components/Footer";
 
@@ -14,7 +13,8 @@ const Index = () => {
   const scrollToAnnouncements = () => {
     announcementsRef.current?.scrollIntoView({ 
       behavior: 'smooth',
-      block: 'start'
+      block: 'start',
+      inline: 'nearest'
     });
   };
 
@@ -27,7 +27,6 @@ const Index = () => {
         <AnnouncementsSection />
       </div>
       <AboutSection />
-      <NewsletterSection />
       <FAQ />
       <Footer />
     </div>

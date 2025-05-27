@@ -73,9 +73,17 @@ paths:
           items:
             type: string
             enum:
+            - bn
             - en
+            - gu
             - hi
+            - kn
+            - ml
+            - mr
+            - or
+            - pa
             - ta
+            - te
         description: Filter by multiple language codes, comma separated.
         explode: false
         style: form
@@ -83,6 +91,12 @@ paths:
         name: id
         schema:
           type: integer
+      - in: query
+        name: language
+        schema:
+          type: string
+        description: Language code for title and description (e.g., 'en', 'hi', 'ta',
+          'bn'). Defaults to 'en'
       - in: query
         name: ministry
         schema:
@@ -102,6 +116,12 @@ paths:
         schema:
           type: integer
         description: Page number for pagination
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
       - in: query
         name: pib_hq
         schema:
@@ -153,7 +173,57 @@ paths:
                       - 1
                       created_at: '2024-01-15T10:35:00Z'
                       updated_at: '2024-01-15T10:35:00Z'
+                      available_languages:
+                      - en
+                      - hi
+                      - ta
+                      description: The Government of India has launched a comprehensive
+                        Digital India initiative aimed at transforming the country
+                        into a digitally empowered society and knowledge economy.
+                      ministry_name: Ministry of Electronics and Information Technology
+                      audience_type_names:
+                      - Citizens
+                      - Businesses
+                      category_names:
+                      - Technology
                   summary: Press Release Example
+                PressReleaseTamilExample:
+                  value:
+                    count: 123
+                    next: http://api.example.org/accounts/?page=4
+                    previous: http://api.example.org/accounts/?page=2
+                    results:
+                    - id: 1
+                      title: அரசு புதிய டிஜிட்டல் இந்தியா முன்முயற்சியை அறிவித்தது
+                      original_text: The Government of India today announced a comprehensive
+                        Digital India initiative...
+                      source_url: https://pib.gov.in/PressReleaseIframePage.aspx?PRID=1234567
+                      date_published: '2024-01-15T10:30:00Z'
+                      pib_hq: Delhi
+                      ministry: 1
+                      audience_type:
+                      - 1
+                      - 2
+                      category:
+                      - 1
+                      created_at: '2024-01-15T10:35:00Z'
+                      updated_at: '2024-01-15T10:35:00Z'
+                      available_languages:
+                      - en
+                      - hi
+                      - ta
+                      description: இந்திய அரசு நாட்டை டிஜிட்டல் ரீதியாக வலுப்படுத்தப்பட்ட
+                        சமூகம் மற்றும் அறிவுப் பொருளாதாரமாக மாற்றுவதை நோக்கமாகக் கொண்ட
+                        ஒரு விரிவான டிஜிட்டல் இந்தியா முன்முயற்சியைத் தொடங்கியுள்ளது.
+                      ministry_name: Ministry of Electronics and Information Technology
+                      audience_type_names:
+                      - Citizens
+                      - Businesses
+                      category_names:
+                      - Technology
+                  summary: Press Release Tamil Example
+                  description: Example showing Tamil language response when language=ta
+                    parameter is used
           description: ''
   /api/press-release/{id}/:
     get:
@@ -168,6 +238,12 @@ paths:
           type: integer
         description: Unique identifier of the press release
         required: true
+      - in: query
+        name: language
+        schema:
+          type: string
+        description: Language code for title and description (e.g., 'en', 'hi', 'ta',
+          'bn'). Defaults to 'en'
       tags:
       - Press Releases
       security:
@@ -198,7 +274,53 @@ paths:
                     - 1
                     created_at: '2024-01-15T10:35:00Z'
                     updated_at: '2024-01-15T10:35:00Z'
+                    available_languages:
+                    - en
+                    - hi
+                    - ta
+                    description: The Government of India has launched a comprehensive
+                      Digital India initiative aimed at transforming the country into
+                      a digitally empowered society and knowledge economy.
+                    ministry_name: Ministry of Electronics and Information Technology
+                    audience_type_names:
+                    - Citizens
+                    - Businesses
+                    category_names:
+                    - Technology
                   summary: Press Release Example
+                PressReleaseTamilExample:
+                  value:
+                    id: 1
+                    title: அரசு புதிய டிஜிட்டல் இந்தியா முன்முயற்சியை அறிவித்தது
+                    original_text: The Government of India today announced a comprehensive
+                      Digital India initiative...
+                    source_url: https://pib.gov.in/PressReleaseIframePage.aspx?PRID=1234567
+                    date_published: '2024-01-15T10:30:00Z'
+                    pib_hq: Delhi
+                    ministry: 1
+                    audience_type:
+                    - 1
+                    - 2
+                    category:
+                    - 1
+                    created_at: '2024-01-15T10:35:00Z'
+                    updated_at: '2024-01-15T10:35:00Z'
+                    available_languages:
+                    - en
+                    - hi
+                    - ta
+                    description: இந்திய அரசு நாட்டை டிஜிட்டல் ரீதியாக வலுப்படுத்தப்பட்ட
+                      சமூகம் மற்றும் அறிவுப் பொருளாதாரமாக மாற்றுவதை நோக்கமாகக் கொண்ட
+                      ஒரு விரிவான டிஜிட்டல் இந்தியா முன்முயற்சியைத் தொடங்கியுள்ளது.
+                    ministry_name: Ministry of Electronics and Information Technology
+                    audience_type_names:
+                    - Citizens
+                    - Businesses
+                    category_names:
+                    - Technology
+                  summary: Press Release Tamil Example
+                  description: Example showing Tamil language response when language=ta
+                    parameter is used
           description: ''
   /api/ministry/:
     get:
@@ -348,7 +470,7 @@ paths:
         name: text_type
         schema:
           type: string
-        description: Filter by text type (e.g., 'summary', 'simplified')
+        description: Filter by text type (e.g., 'summary', 'simplified', 'original', 'keypoints', 'oversimplified')
       tags:
       - Translations
       security:
@@ -413,6 +535,85 @@ paths:
                     - Mumbai
                     - Kolkata
                     - Chennai
+                  summary: Success Response
+          description: ''
+  /api/languages/:
+    get:
+      operationId: api_languages_retrieve
+      description: Retrieve a list of all available languages from press releases,
+        excluding null and empty values, ordered alphabetically.
+      summary: Get All Languages
+      tags:
+      - Utilities
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    choice:
+                      type: string
+                    label:
+                      type: string
+                example:
+                - choice: en
+                  label: English
+                - choice: hi
+                  label: Hindi
+                - choice: bn
+                  label: Bengali
+                - choice: ta
+                  label: Tamil
+              examples:
+                SuccessResponse:
+                  value:
+                  - choice: en
+                    label: English
+                  - choice: hi
+                    label: Hindi
+                  - choice: bn
+                    label: Bengali
+                  - choice: ta
+                    label: Tamil
+                  summary: Success Response
+          description: ''
+  /api/stats/:
+    get:
+      operationId: api_stats_retrieve
+      description: Get the total number of press releases, ministries, and languages
+      summary: Get Total Count
+      tags:
+      - Stats
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  press_releases:
+                    type: integer
+                  ministries:
+                    type: integer
+                  languages:
+                    type: integer
+              examples:
+                SuccessResponse:
+                  value:
+                    press_releases: 100
+                    ministries: 10
+                    languages: 10
                   summary: Success Response
           description: ''
   /:
@@ -483,11 +684,27 @@ components:
       - en
       - hi
       - ta
+      - mr
+      - gu
+      - bn
+      - or
+      - ml
+      - kn
+      - pa
+      - te
       type: string
       description: |-
         * `en` - English
         * `hi` - Hindi
         * `ta` - Tamil
+        * `mr` - Marathi
+        * `gu` - Gujarati
+        * `bn` - Bengali
+        * `or` - Odia
+        * `ml` - Malayalam
+        * `kn` - Kannada
+        * `pa` - Punjabi
+        * `te` - Telugu
     Ministry:
       type: object
       description: |-
@@ -635,9 +852,21 @@ components:
         id:
           type: integer
           readOnly: true
+        available_languages:
+          type: object
+          additionalProperties: {}
+          description: List of language codes for which translations are available
+          readOnly: true
+        description:
+          type: string
+          description: 'Summary of the press release in the requested language (default:
+            English)'
+          readOnly: true
         title:
           type: string
-          maxLength: 500
+          description: 'Title of the press release in the requested language (default:
+            English)'
+          readOnly: true
         original_text:
           type: string
         source_url:
@@ -672,9 +901,11 @@ components:
             type: integer
       required:
       - audience_type
+      - available_languages
       - category
       - created_at
       - date_published
+      - description
       - id
       - original_text
       - source_url
@@ -721,16 +952,26 @@ components:
           type: string
           nullable: true
           maxLength: 500
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
         press_release:
           type: integer
       required:
       - content
+      - created_at
       - id
       - language
       - language_display
       - press_release
       - press_release_title
       - text_type
+      - updated_at
   securitySchemes:
     basicAuth:
       type: http

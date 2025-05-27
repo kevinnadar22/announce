@@ -49,8 +49,8 @@ def add(self, a, b):
 @shared_task(bind=True)
 def initial_pib_scrape_task(self):
     """
-    Step 1: Scrapes metadata for new press releases and dispatches
-    individual processing tasks for each.
+    Step 1: Scrapes metadata for new press releases and processes
+    them one by one synchronously.
     """
     logger.info("Starting initial PIB scrape task...")
     try:
@@ -61,23 +61,34 @@ def initial_pib_scrape_task(self):
             exc=exc, countdown=self.request.retries * 60
         )  # Exponential backoff
 
-    tasks = []
+    processed_count = 0
     for release_meta in releases_metadata.press_releases:
-        # Check if URL exists in DB before dispatching task
+        # Check if URL exists in DB before processing
         if PressRelease.objects.filter(source_url=str(release_meta.url)).exists():
             logger.info(
                 f"Press Release with URL {release_meta.url} already exists. Skipping."
             )
             continue
-        tasks.append(
-            process_single_press_release.s(str(release_meta.url), release_meta.ministry)
-        )
 
-    if tasks:
-        logger.info(f"Dispatching {len(tasks)} process_single_press_release tasks.")
-        group(tasks).apply_async()  # Use group to run tasks in parallel
-    else:
-        logger.info("No new press releases found to process.")
+        # Process each press release synchronously, one by one
+        try:
+            logger.info(
+                f"Processing press release {processed_count + 1}: {release_meta.url}"
+            )
+            process_single_press_release(str(release_meta.url), release_meta.ministry)
+            processed_count += 1
+            logger.info(f"Successfully processed press release: {release_meta.url}")
+        except Exception as exc:
+            logger.error(
+                f"Failed to process press release {release_meta.url}: {exc}",
+                exc_info=True,
+            )
+            # Continue with the next one instead of failing the entire task
+            continue
+
+    logger.info(
+        f"Completed initial PIB scrape task. Processed {processed_count} new press releases."
+    )
 
 
 @shared_task(bind=True)
@@ -95,6 +106,7 @@ def process_single_press_release(
     logger.info(f"Processing single press release: {url}")
     try:
         content_data = get_press_release_content(url)
+
         if not content_data or not content_data.content:
             logger.warning(f"No content found for URL: {url}. Skipping.")
             return
@@ -107,11 +119,7 @@ def process_single_press_release(
 
         original_text = content_data.content
 
-        # Generate English versions
-        simplified_text = generate_simplified_text(original_text)
-        oversimplified_text = generate_oversimplified_text(original_text)
         summary = generate_summary(original_text)
-        keypoints = generate_keypoints(original_text)
         headline = summary.headline
 
         # Create Ministry object if it doesn't exist
@@ -134,8 +142,6 @@ def process_single_press_release(
             logger.info(
                 f"PressRelease for URL {url} already existed. Proceeding with translations."
             )
-            # If it already existed, you might want to re-process content if logic changes,
-            # but for now, we assume it's there.
 
         # Save original English content (first)
         _save_translated_text_data(pr, "en", "original", original_text)
@@ -147,89 +153,110 @@ def process_single_press_release(
         translation_tasks = []
 
         # English-specific processing and saving
-        translation_tasks.append(
-            process_and_save_translated_batch.s(
-                pr.id,
-                "en",
-                "simplified",
-                [
-                    {"content": text.description_html, "title": text.title}
-                    for text in simplified_text.summary_points
-                ],
-                translate_content=False,
-                title_key="title",
+        if not is_text_type_present(pr, "simplified", "en"):
+            simplified_text = generate_simplified_text(original_text)
+            translation_tasks.append(
+                process_and_save_translated_batch.s(
+                    pr.id,
+                    "en",
+                    "simplified",
+                    [
+                        {"content": text.description_html, "title": text.title}
+                        for text in simplified_text.summary_points
+                    ],
+                    translate_content=False,
+                    title_key="title",
+                )
             )
-        )
-        translation_tasks.append(
-            process_and_save_translated_batch.s(
-                pr.id,
-                "en",
-                "oversimplified",
-                [
-                    {"content": text.story_html, "title": text.title}
-                    for text in oversimplified_text.story_points
-                ],
-                translate_content=False,
-                title_key="title",
+
+        if not is_text_type_present(pr, "oversimplified", "en"):
+            oversimplified_text = generate_oversimplified_text(original_text)
+            translation_tasks.append(
+                process_and_save_translated_batch.s(
+                    pr.id,
+                    "en",
+                    "oversimplified",
+                    [
+                        {"content": text.story_html, "title": text.title}
+                        for text in oversimplified_text.story_points
+                    ],
+                    translate_content=False,
+                    title_key="title",
+                )
             )
-        )
-        translation_tasks.append(
-            process_and_save_translated_batch.s(
-                pr.id,
-                "en",
-                "keypoints",
-                [{"content": text.point} for text in keypoints.key_summary_points],
-                translate_content=False,
+
+        if not is_text_type_present(pr, "keypoints", "en"):
+            keypoints = generate_keypoints(original_text)
+            translation_tasks.append(
+                process_and_save_translated_batch.s(
+                    pr.id,
+                    "en",
+                    "keypoints",
+                    [{"content": text.point} for text in keypoints.key_summary_points],
+                    translate_content=False,
+                )
             )
-        )
 
         # Translation for other languages
         for lang_code, _ in LANGUAGE_CHOICES:
             if lang_code == "en":
                 continue
 
-            translation_tasks.append(
-                translate_and_save_text.s(
-                    pr.id,
-                    lang_code,
-                    "summary",
-                    summary.eye_catching_summary_sentence,
-                    title=headline,  # Pass headline for consistent saving
+            # check if the summary exists
+            if not is_text_type_present(pr, "summary", lang_code):
+                translation_tasks.append(
+                    translate_and_save_text.s(
+                        pr.id,
+                        lang_code,
+                        "summary",
+                        summary.eye_catching_summary_sentence,
+                        title=headline,  # Pass headline for consistent saving
+                    )
                 )
-            )
 
-            translation_tasks.append(
-                process_and_save_translated_batch.s(
-                    pr.id,
-                    lang_code,
-                    "simplified",
-                    [
-                        {"content": text.description_html, "title": text.title}
-                        for text in simplified_text.summary_points
-                    ],
-                    title_key="title",
+            # check if the simplified exists
+            if not is_text_type_present(pr, "simplified", lang_code):
+                translation_tasks.append(
+                    process_and_save_translated_batch.s(
+                        pr.id,
+                        lang_code,
+                        "simplified",
+                        [
+                            {"content": text.description_html, "title": text.title}
+                            for text in simplified_text.summary_points
+                        ],
+                        title_key="title",
+                    )
                 )
-            )
-            translation_tasks.append(
-                process_and_save_translated_batch.s(
-                    pr.id,
-                    lang_code,
-                    "oversimplified",
-                    [
-                        {"content": text.story_html, "title": text.title}
-                        for text in oversimplified_text.story_points
-                    ],
-                    title_key="title",
+
+            # check if the oversimplified exists
+            if not is_text_type_present(pr, "oversimplified", lang_code):
+                translation_tasks.append(
+                    process_and_save_translated_batch.s(
+                        pr.id,
+                        lang_code,
+                        "oversimplified",
+                        [
+                            {"content": text.story_html, "title": text.title}
+                            for text in oversimplified_text.story_points
+                        ],
+                        title_key="title",
+                    )
                 )
-            )
-            translation_tasks.append(
-                process_and_save_translated_batch.s(
-                    pr.id,
-                    lang_code,
-                    "keypoints",
-                    [{"content": text.point} for text in keypoints.key_summary_points],
+
+            # check if the keypoints exists
+            if not is_text_type_present(pr, "keypoints", lang_code):
+                translation_tasks.append(
+                    process_and_save_translated_batch.s(
+                        pr.id,
+                        lang_code,
+                        "keypoints",
+                        [
+                            {"content": text.point}
+                            for text in keypoints.key_summary_points
+                        ],
+                    )
                 )
-            )
 
         # Execute all translation and saving tasks in parallel
         group(translation_tasks).apply_async()
@@ -332,3 +359,9 @@ def process_and_save_translated_batch(
             f"Error processing batch for {pr_id} ({text_type} {language}): {exc}",
             exc_info=True,
         )
+
+
+def is_text_type_present(pr: PressRelease, text_type: str, language: str) -> bool:
+    return TranslatedText.objects.filter(
+        press_release=pr, text_type=text_type, language=language
+    ).exists()

@@ -1,92 +1,146 @@
-
 import { useState } from "react";
 import { Tag, Building2, Users, Globe, MapPin } from "lucide-react";
 import type { DateRange } from "react-day-picker";
 
 import SearchBar from "./filters/SearchBar";
-import FilterSelect from "./filters/FilterSelect";
+import SearchableFilterSelect from "./filters/SearchableFilterSelect";
 import DateRangeFilter from "./filters/DateRangeFilter";
 import ActiveFilters from "./filters/ActiveFilters";
-import { categories, ministries, audiences, languages, locations } from "./filters/FilterData";
+import { useCategoriesForFilter } from "@/hooks/useCategories";
+import { useMinistriesForFilter } from "@/hooks/useMinistries";
+import { useAudienceTypesForFilter } from "@/hooks/useAudienceTypes";
+import { useLanguagesForFilter } from "@/hooks/useLanguages";
+import { usePibHqForFilter } from "@/hooks/usePibHq";
 
-const AnnouncementFilters = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedMinistry, setSelectedMinistry] = useState("");
-  const [selectedAudience, setSelectedAudience] = useState("");
-  const [selectedLanguage, setSelectedLanguage] = useState("");
-  const [selectedLocation, setSelectedLocation] = useState("");
-  const [dateRange, setDateRange] = useState<DateRange | undefined>();
+interface AnnouncementFiltersProps {
+  searchTerm: string;
+  onSearchTermChange: (value: string) => void;
+  selectedCategory: string;
+  onCategoryChange: (value: string) => void;
+  selectedMinistry: string;
+  onMinistryChange: (value: string) => void;
+  selectedAudience: string;
+  onAudienceChange: (value: string) => void;
+  selectedLanguage: string;
+  onLanguageChange: (value: string) => void;
+  selectedLocation: string;
+  onLocationChange: (value: string) => void;
+  dateRange: DateRange | undefined;
+  onDateRangeChange: (value: DateRange | undefined) => void;
+  onClearFilters: () => void;
+}
 
-  const clearFilters = () => {
-    setSearchTerm("");
-    setSelectedCategory("");
-    setSelectedMinistry("");
-    setSelectedAudience("");
-    setSelectedLanguage("");
-    setSelectedLocation("");
-    setDateRange(undefined);
-  };
+const AnnouncementFilters = ({
+  searchTerm,
+  onSearchTermChange,
+  selectedCategory,
+  onCategoryChange,
+  selectedMinistry,
+  onMinistryChange,
+  selectedAudience,
+  onAudienceChange,
+  selectedLanguage,
+  onLanguageChange,
+  selectedLocation,
+  onLocationChange,
+  dateRange,
+  onDateRangeChange,
+  onClearFilters
+}: AnnouncementFiltersProps) => {
+  // Fetch data from APIs
+  const { data: categories = [], isLoading: categoriesLoading, error: categoriesError } = useCategoriesForFilter();
+  const { data: ministries = [], isLoading: ministriesLoading, error: ministriesError } = useMinistriesForFilter();
+  const { data: audiences = [], isLoading: audiencesLoading, error: audiencesError } = useAudienceTypesForFilter();
+  const { data: languages = [], isLoading: languagesLoading, error: languagesError } = useLanguagesForFilter();
+  const { data: locations = [], isLoading: locationsLoading, error: locationsError } = usePibHqForFilter();
 
   const getSelectedCategoryLabel = () => {
     return categories.find(c => c.value === selectedCategory)?.label;
+  };
+
+  const getSelectedMinistryLabel = () => {
+    return ministries.find(m => m.value === selectedMinistry)?.label;
+  };
+
+  const getSelectedAudienceLabel = () => {
+    return audiences.find(a => a.value === selectedAudience)?.label;
   };
 
   const getSelectedLanguageLabel = () => {
     return languages.find(l => l.value === selectedLanguage)?.label;
   };
 
-  const ministryOptions = ministries.map(ministry => ({ value: ministry, label: ministry }));
-  const audienceOptions = audiences.map(audience => ({ value: audience, label: audience }));
-  const locationOptions = locations.map(location => ({ value: location, label: location }));
+  const getSelectedLocationLabel = () => {
+    return locations.find(l => l.value === selectedLocation)?.label;
+  };
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-      <SearchBar value={searchTerm} onChange={setSearchTerm} />
+      <SearchBar value={searchTerm} onChange={onSearchTermChange} />
 
       {/* Filter Controls Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mb-6">
-        <FilterSelect
+        <SearchableFilterSelect
           value={selectedCategory}
-          onValueChange={setSelectedCategory}
-          placeholder="Category"
+          onValueChange={onCategoryChange}
+          placeholder={categoriesLoading ? "Loading categories..." : categoriesError ? "Failed to load categories" : "Category"}
           icon={Tag}
           options={categories}
+          disabled={categoriesLoading || !!categoriesError}
+          maxLabelLength={20}
+          searchPlaceholder="Search categories..."
+          allOptionLabel="All Categories"
         />
 
-        <FilterSelect
+        <SearchableFilterSelect
           value={selectedMinistry}
-          onValueChange={setSelectedMinistry}
-          placeholder="Ministry"
+          onValueChange={onMinistryChange}
+          placeholder={ministriesLoading ? "Loading ministries..." : ministriesError ? "Failed to load ministries" : "Ministry"}
           icon={Building2}
-          options={ministryOptions}
+          options={ministries}
+          disabled={ministriesLoading || !!ministriesError}
+          maxLabelLength={20}
+          searchPlaceholder="Search ministries..."
+          allOptionLabel="All Ministries"
         />
 
-        <FilterSelect
+        <SearchableFilterSelect
           value={selectedAudience}
-          onValueChange={setSelectedAudience}
-          placeholder="Audience"
+          onValueChange={onAudienceChange}
+          placeholder={audiencesLoading ? "Loading audiences..." : audiencesError ? "Failed to load audiences" : "Audience"}
           icon={Users}
-          options={audienceOptions}
+          options={audiences}
+          disabled={audiencesLoading || !!audiencesError}
+          maxLabelLength={20}
+          searchPlaceholder="Search audiences..."
+          allOptionLabel="All Audiences"
         />
 
-        <FilterSelect
+        <SearchableFilterSelect
           value={selectedLanguage}
-          onValueChange={setSelectedLanguage}
-          placeholder="Language"
+          onValueChange={onLanguageChange}
+          placeholder={languagesLoading ? "Loading languages..." : languagesError ? "Failed to load languages" : "Language"}
           icon={Globe}
           options={languages}
+          disabled={languagesLoading || !!languagesError}
+          maxLabelLength={20}
+          searchPlaceholder="Search languages..."
+          allOptionLabel="All Languages"
         />
 
-        <FilterSelect
+        <SearchableFilterSelect
           value={selectedLocation}
-          onValueChange={setSelectedLocation}
-          placeholder="Location"
+          onValueChange={onLocationChange}
+          placeholder={locationsLoading ? "Loading locations..." : locationsError ? "Failed to load locations" : "Location"}
           icon={MapPin}
-          options={locationOptions}
+          options={locations}
+          disabled={locationsLoading || !!locationsError}
+          maxLabelLength={20}
+          searchPlaceholder="Search locations..."
+          allOptionLabel="All Locations"
         />
 
-        <DateRangeFilter value={dateRange} onChange={setDateRange} />
+        <DateRangeFilter value={dateRange} onChange={onDateRangeChange} />
       </div>
 
       <ActiveFilters
@@ -98,8 +152,11 @@ const AnnouncementFilters = () => {
         selectedLocation={selectedLocation}
         dateRange={dateRange}
         categoryLabel={getSelectedCategoryLabel()}
+        ministryLabel={getSelectedMinistryLabel()}
+        audienceLabel={getSelectedAudienceLabel()}
         languageLabel={getSelectedLanguageLabel()}
-        onClear={clearFilters}
+        locationLabel={getSelectedLocationLabel()}
+        onClear={onClearFilters}
       />
     </div>
   );

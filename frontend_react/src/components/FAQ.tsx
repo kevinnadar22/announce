@@ -10,8 +10,16 @@ import { HelpCircle } from "lucide-react";
 const FAQ = () => {
   const faqs = [
     {
+      question: "What is Announce?",
+      answer: "Announce is an independent platform for accessing government announcements, policies, and schemes. Making government communication accessible to all citizens with AI-powered simplification and multilingual support."
+    },
+    {
       question: "How often are announcements updated?",
       answer: "Government announcements are updated in real-time as soon as they are published by the respective ministries and departments. Our platform ensures you get the latest information within minutes of official publication."
+    },
+    {
+      question: "Is Announce affiliated with the Government of India?",
+      answer: "Announce is an independent platform and is not affiliated with the Government of India. We aggregate publicly available information for educational and informational purposes only."
     },
     {
       question: "In which languages are announcements available?",
@@ -26,16 +34,8 @@ const FAQ = () => {
       answer: "We aggregate announcements from major government sources including Press Information Bureau (PIB) and various ministry websites. While we strive for comprehensive coverage, some specialized announcements may be available directly on ministry websites."
     },
     {
-      question: "Can I get notifications for specific types of announcements?",
-      answer: "Currently, the platform provides real-time updates on the website. We are working on implementing notification features that will allow you to subscribe to specific categories or ministries."
-    },
-    {
       question: "How do I verify the authenticity of announcements?",
       answer: "All announcements include direct links to the original government sources. We recommend verifying important information by clicking on the source link to view the original announcement on the official government website."
-    },
-    {
-      question: "Is there a mobile app available?",
-      answer: "Currently, GovAnnounce is available as a responsive web application that works seamlessly on mobile devices. We are planning to launch dedicated mobile apps for Android and iOS in the future."
     },
     {
       question: "How can I search for specific announcements?",
@@ -54,7 +54,7 @@ const FAQ = () => {
             </h2>
           </div>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Find answers to common questions about using GovAnnounce
+            Find answers to common questions about using Announce
           </p>
         </div>
 
@@ -76,8 +76,8 @@ const FAQ = () => {
         <div className="text-center mt-8">
           <p className="text-gray-600">
             Still have questions? Contact our support team at{" "}
-            <a href="mailto:support@govannounce.gov.in" className="text-emerald-600 hover:text-emerald-700 font-medium">
-              support@govannounce.gov.in
+            <a href="mailto:jesikamaraj@gmail.com" className="text-emerald-600 hover:text-emerald-700 font-medium">
+              jesikamaraj@gmail.com
             </a>
           </p>
         </div>

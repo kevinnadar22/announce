@@ -53,13 +53,13 @@ const DateRangeFilter = ({ value, onChange }: DateRangeFilterProps) => {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
-        <div className="p-3 border-b">
+        <div className="p-3 border-b bg-emerald-50">
           <div className="grid grid-cols-2 gap-2 mb-2">
             <Button 
               variant="outline" 
               size="sm" 
               onClick={() => setQuickDateRange(7)}
-              className="text-xs"
+              className="text-xs hover:bg-emerald-100 hover:border-emerald-300"
             >
               Last 7 Days
             </Button>
@@ -67,7 +67,7 @@ const DateRangeFilter = ({ value, onChange }: DateRangeFilterProps) => {
               variant="outline" 
               size="sm" 
               onClick={() => setQuickDateRange(30)}
-              className="text-xs"
+              className="text-xs hover:bg-emerald-100 hover:border-emerald-300"
             >
               Last 30 Days
             </Button>
@@ -75,7 +75,7 @@ const DateRangeFilter = ({ value, onChange }: DateRangeFilterProps) => {
               variant="outline" 
               size="sm" 
               onClick={() => setQuickDateRange(90)}
-              className="text-xs"
+              className="text-xs hover:bg-emerald-100 hover:border-emerald-300"
             >
               Last 3 Months
             </Button>
@@ -83,7 +83,7 @@ const DateRangeFilter = ({ value, onChange }: DateRangeFilterProps) => {
               variant="outline" 
               size="sm" 
               onClick={() => setQuickDateRange(365)}
-              className="text-xs"
+              className="text-xs hover:bg-emerald-100 hover:border-emerald-300"
             >
               Last Year
             </Button>
@@ -93,7 +93,7 @@ const DateRangeFilter = ({ value, onChange }: DateRangeFilterProps) => {
               variant="ghost" 
               size="sm" 
               onClick={clearDateRange}
-              className="w-full text-xs text-gray-500 hover:text-gray-700"
+              className="w-full text-xs text-emerald-600 hover:text-emerald-700 hover:bg-emerald-100"
             >
               Clear Selection
             </Button>
@@ -105,7 +105,8 @@ const DateRangeFilter = ({ value, onChange }: DateRangeFilterProps) => {
           defaultMonth={value?.from}
           selected={value}
           onSelect={onChange}
-          numberOfMonths={2}
+          numberOfMonths={1}
+          className="rounded-lg"
         />
       </PopoverContent>
     </Popover>

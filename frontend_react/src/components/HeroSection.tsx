@@ -1,12 +1,23 @@
 import { Button } from "@/components/ui/button";
 import { TrendingUp, Users, Globe, Clock, Search, Filter, Bell, Zap, Shield, Star } from "lucide-react";
 import { useState } from "react";
+import { useStats } from "@/hooks/useStats";
 
 interface HeroSectionProps {
   onGetStarted: () => void;
 }
 
 const HeroSection = ({ onGetStarted }: HeroSectionProps) => {
+  const { data: stats, isLoading: statsLoading } = useStats();
+
+  const formatNumber = (num?: number) => {
+    if (!num) return '0';
+    if (num >= 1000) {
+      return `${(num / 1000).toFixed(1)}k+`;
+    }
+    return `${num}+`;
+  };
+
   return (
     <section className="relative bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 py-16 md:py-24 overflow-hidden">
       {/* Enhanced Background decorative elements */}
@@ -31,7 +42,7 @@ const HeroSection = ({ onGetStarted }: HeroSectionProps) => {
           </div>
 
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight">
-            <span className="text-emerald-600">Government</span> Announcements
+            <span className="text-emerald-600">🇮🇳 Government</span> Announcements
             <br />
             <span className="text-green-600 relative">
               Made Simple
@@ -86,21 +97,27 @@ const HeroSection = ({ onGetStarted }: HeroSectionProps) => {
               <div className="flex items-center justify-center mb-3">
                 <TrendingUp className="h-8 w-8 text-emerald-600" />
               </div>
-              <div className="text-3xl font-bold text-gray-900 mb-1">1,250+</div>
+              <div className="text-3xl font-bold text-gray-900 mb-1">
+                {statsLoading ? '...' : formatNumber(stats?.press_releases)}
+              </div>
               <div className="text-sm text-gray-600">Live Announcements</div>
             </div>
             <div className="text-center bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-emerald-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
               <div className="flex items-center justify-center mb-3">
                 <Users className="h-8 w-8 text-green-600" />
               </div>
-              <div className="text-3xl font-bold text-gray-900 mb-1">35+</div>
+              <div className="text-3xl font-bold text-gray-900 mb-1">
+                {statsLoading ? '...' : formatNumber(stats?.ministries)}
+              </div>
               <div className="text-sm text-gray-600">Ministries</div>
             </div>
             <div className="text-center bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-emerald-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
               <div className="flex items-center justify-center mb-3">
                 <Globe className="h-8 w-8 text-teal-600" />
               </div>
-              <div className="text-3xl font-bold text-gray-900 mb-1">15+</div>
+              <div className="text-3xl font-bold text-gray-900 mb-1">
+                {statsLoading ? '...' : formatNumber(stats?.languages)}
+              </div>
               <div className="text-sm text-gray-600">Languages</div>
             </div>
             <div className="text-center bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-emerald-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">

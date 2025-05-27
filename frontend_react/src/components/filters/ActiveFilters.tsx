@@ -1,4 +1,3 @@
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
@@ -14,7 +13,10 @@ interface ActiveFiltersProps {
   selectedLocation: string;
   dateRange: DateRange | undefined;
   categoryLabel?: string;
+  ministryLabel?: string;
+  audienceLabel?: string;
   languageLabel?: string;
+  locationLabel?: string;
   onClear: () => void;
 }
 
@@ -27,7 +29,10 @@ const ActiveFilters = ({
   selectedLocation,
   dateRange,
   categoryLabel,
+  ministryLabel,
+  audienceLabel,
   languageLabel,
+  locationLabel,
   onClear
 }: ActiveFiltersProps) => {
   const hasActiveFilters = searchTerm || selectedCategory || selectedMinistry || selectedAudience || selectedLanguage || selectedLocation || dateRange?.from;
@@ -51,12 +56,12 @@ const ActiveFilters = ({
           )}
           {selectedMinistry && (
             <Badge variant="outline" className="bg-emerald-50 border-emerald-200 text-emerald-700">
-              {selectedMinistry}
+              {ministryLabel}
             </Badge>
           )}
           {selectedAudience && (
             <Badge variant="outline" className="bg-emerald-50 border-emerald-200 text-emerald-700">
-              {selectedAudience}
+              {audienceLabel}
             </Badge>
           )}
           {selectedLanguage && (
@@ -66,7 +71,7 @@ const ActiveFilters = ({
           )}
           {selectedLocation && (
             <Badge variant="outline" className="bg-emerald-50 border-emerald-200 text-emerald-700">
-              {selectedLocation}
+              {locationLabel}
             </Badge>
           )}
           {dateRange?.from && (

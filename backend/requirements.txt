@@ -14,3 +14,10 @@ redis==5.0.2
 Requests==2.32.3
 tenacity==8.2.3
 urllib3==2.4.0
+# Additional dependencies for production
+gunicorn==22.0.0
+celery==5.3.6
+flower==2.0.1
+redbeat==2.0.0
+django-cors-headers==4.4.0
+psycopg2-binary==2.9.9

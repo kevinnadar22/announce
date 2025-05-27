@@ -1,3 +1,5 @@
+from random import choices
+from django.http import JsonResponse
 from rest_framework import generics
 from .models import PressRelease, TranslatedText, Ministry, AudienceType, Category
 from .serializers import (
@@ -25,6 +27,10 @@ from drf_spectacular.utils import (
     OpenApiExample,
 )
 from drf_spectacular.types import OpenApiTypes
+from .constants.choices import LANGUAGE_CHOICES
+from .pagination import CustomPageNumberPagination
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
 
 
 @extend_schema(
@@ -76,6 +82,7 @@ def health_check(request):
         )
     ],
 )
+@cache_page(timeout=60 * 15)
 @api_view(["GET"])
 def unique_pib_hq(request):
     # Get unique PIB HQ values, excluding null/empty values and ordering alphabetically
@@ -87,6 +94,51 @@ def unique_pib_hq(request):
         .distinct()
     )
     return Response({"pib_hq": list(unique_values)})
+
+
+
+@extend_schema(
+    tags=["Utilities"],
+    summary="Get All Languages",
+    description="Retrieve a list of all available languages from press releases, excluding null and empty values, ordered alphabetically.",
+    responses={
+        200: {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "choice": {"type": "string"},
+                    "label": {"type": "string"},
+                },
+            },
+            "example": [
+                {"choice": "en", "label": "English"},
+                {"choice": "hi", "label": "Hindi"},
+                {"choice": "bn", "label": "Bengali"},
+                {"choice": "ta", "label": "Tamil"},
+            ],
+        }
+    },
+    examples=[
+        OpenApiExample(
+            "Success Response",
+            value=[
+                {"choice": "en", "label": "English"},
+                {"choice": "hi", "label": "Hindi"},
+                {"choice": "bn", "label": "Bengali"},
+                {"choice": "ta", "label": "Tamil"},
+            ],
+            response_only=True,
+            status_codes=["200"],
+        )
+    ],
+)
+@api_view(["GET"])
+def all_languages(request):
+    # return from constants/choices.py
+    # return json response with choices
+    data = [{"choice": choice[0], "label": choice[1]} for choice in LANGUAGE_CHOICES]
+    return JsonResponse(data, safe=False)
 
 
 @extend_schema_view(
@@ -149,19 +201,35 @@ def unique_pib_hq(request):
                 location=OpenApiParameter.QUERY,
                 description="Page number for pagination",
             ),
+            OpenApiParameter(
+                name="language",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                description="Language code for title and description (e.g., 'en', 'hi', 'ta', 'bn'). Defaults to 'en'",
+            ),
         ],
     )
 )
 class PressReleaseList(generics.ListAPIView):
-    queryset = PressRelease.objects.all().order_by("-date_published")
+    queryset = (
+        PressRelease.objects.all()
+        .select_related('ministry')
+        .prefetch_related(
+            'translations',
+            'audience_type',
+            'category'
+        )
+        .order_by("-date_published")
+    )
     serializer_class = PressReleaseSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = PressReleaseFilter
     ordering = ["-date_published"]
     ordering_fields = ["date_published"]
     search_fields = ["title", "original_text"]
+    pagination_class = CustomPageNumberPagination
 
-
+@method_decorator(cache_page(60 * 15), name="get")
 @extend_schema_view(
     get=extend_schema(
         tags=["Press Releases"],
@@ -173,7 +241,13 @@ class PressReleaseList(generics.ListAPIView):
                 type=OpenApiTypes.INT,
                 location=OpenApiParameter.PATH,
                 description="Unique identifier of the press release",
-            )
+            ),
+            OpenApiParameter(
+                name="language",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                description="Language code for title and description (e.g., 'en', 'hi', 'ta', 'bn'). Defaults to 'en'",
+            ),
         ],
     )
 )
@@ -181,7 +255,7 @@ class PressReleaseDetail(generics.RetrieveAPIView):
     queryset = PressRelease.objects.all()
     serializer_class = PressReleaseSerializer
 
-
+@method_decorator(cache_page(60 * 5), name="get")
 @extend_schema_view(
     get=extend_schema(
         tags=["Translations"],
@@ -215,7 +289,7 @@ class TranslatedTextList(generics.ListAPIView):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["press_release", "language", "text_type"]
 
-
+@method_decorator(cache_page(60 * 5), name="get")
 @extend_schema_view(
     get=extend_schema(
         tags=["Metadata"],
@@ -238,6 +312,7 @@ class MinistryList(generics.ListAPIView):
     filterset_class = MinistryFilter
 
 
+@method_decorator(cache_page(60 * 5), name="get")
 @extend_schema_view(
     get=extend_schema(
         tags=["Metadata"],
@@ -260,6 +335,7 @@ class AudienceTypeList(generics.ListAPIView):
     filterset_class = AudienceTypeFilter
 
 
+@method_decorator(cache_page(60 * 5), name="get")
 @extend_schema_view(
     get=extend_schema(
         tags=["Metadata"],
@@ -280,3 +356,39 @@ class CategoryList(generics.ListAPIView):
     serializer_class = CategorySerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = CategoryFilter
+
+
+@extend_schema(
+    tags=["Stats"],
+    summary="Get Total Count",
+    description="Get the total number of press releases, ministries, and languages",
+    responses={
+        200: {
+            "type": "object",
+            "properties": {
+                "press_releases": {"type": "integer"},
+                "ministries": {"type": "integer"},
+                "languages": {"type": "integer"},
+            },
+        }
+    },
+    examples=[
+        OpenApiExample(
+            "Success Response",
+            value={"press_releases": 100, "ministries": 10, "languages": 10},
+        )
+    ],
+)
+@cache_page(timeout=60 * 15)
+@api_view(["GET"])
+def total_count(request):
+    press_releases = PressRelease.objects.count()
+    ministries = Ministry.objects.count()
+    languages = len(LANGUAGE_CHOICES)
+    return Response(
+        {
+            "press_releases": press_releases,
+            "ministries": ministries,
+            "languages": languages,
+        }
+    )

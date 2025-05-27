@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 
 const Header = () => {
@@ -7,12 +6,14 @@ const Header = () => {
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">GA</span>
-            </div>
+            <img 
+              src="/logo-modified.png" 
+              alt="Announce Logo" 
+              className="w-10 h-10"
+            />
             <div>
-              <h1 className="text-xl font-bold text-gray-900">GovAnnounce</h1>
-              <p className="text-xs text-gray-600">Government of India</p>
+              <h1 className="text-xl font-bold text-gray-900">Announce</h1>
+              <p className="text-xs text-gray-600">Simplified Announcements</p>
             </div>
           </div>
         </div>

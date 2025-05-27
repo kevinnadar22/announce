@@ -61,10 +61,10 @@ const AboutSection = () => {
         {/* About Header */}
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            About GovAnnounce
+            About Announce
           </h2>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            GovAnnounce is your trusted platform for accessing official government announcements, 
+            Announce is your trusted platform for accessing official government announcements, 
             policies, and schemes. We make government communication accessible, searchable, and 
             user-friendly for all citizens across India.
           </p>

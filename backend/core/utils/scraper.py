@@ -9,6 +9,8 @@ from ..constants.response_models import (
     PressReleaseContent,
 )
 from datetime import datetime
+from django.utils import timezone
+import pytz
 
 session = get_retry_session()
 
@@ -48,7 +50,7 @@ def get_press_release_metadata():
                 PressReleaseMetadata(ministry=ministry, title=title, url=full_url)
             )
     # return only 1 press release metadata
-    #press_releases_metadata = press_releases_metadata[:1]
+    # press_releases_metadata = press_releases_metadata[:1]
     return PressReleaseMetadataList(press_releases=press_releases_metadata)
 
 
@@ -86,13 +88,29 @@ def get_press_release_content(url):
             elif meridian == "AM" and hour == 12:
                 hour = 0
 
-            date_published = datetime(
+            # Create a naive datetime first
+            naive_dt = datetime(
                 int(year),
                 datetime.strptime(month, "%B").month,
                 int(day),
                 hour,
                 int(minute),
             )
+
+            # Since PIB time is always in IST, localize it to IST
+            ist = pytz.timezone("Asia/Kolkata")
+            date_published = ist.localize(naive_dt)
+
+            # If Django timezone is different from IST, convert it
+            if str(timezone.get_current_timezone()) != "Asia/Kolkata":
+                date_published = date_published.astimezone(
+                    timezone.get_current_timezone()
+                )
+
+            # Validate date is not in future (using Django's timezone)
+            if date_published > timezone.now():
+                # Set to current time if date is in future
+                date_published = timezone.now()
 
     if content:
         return PressReleaseContent(
