@@ -8,21 +8,12 @@ import { useNavigate } from "react-router-dom";
 const RecentAnnouncements = () => {
   const navigate = useNavigate();
 
-  // Fetch recent announcements
-  const { data: recentData, isLoading: recentLoading } = usePressReleases({
+  // Single API call to fetch all needed announcements
+  const { data: announcementsData, isLoading } = usePressReleases({
     params: {
       page: 1,
-      page_size: 3,
+      page_size: 5, // We need 5 total: 2 for top and 3 for recent
       ordering: '-date_published',
-    },
-  });
-
-  // Fetch trending announcements (you can adjust criteria as needed)
-  const { data: trendingData, isLoading: trendingLoading } = usePressReleases({
-    params: {
-      page: 1,
-      page_size: 2,
-      ordering: '-date_published', // You could use different ordering for trending
     },
   });
 
@@ -47,8 +38,10 @@ const RecentAnnouncements = () => {
     window.scrollTo(0, 0);
   };
 
-  const topAnnouncements = trendingData?.results?.slice(0, 2) || [];
-  const otherRecent = recentData?.results?.slice(0, 3) || [];
+  // Split the results into top and recent sections
+  const allAnnouncements = announcementsData?.results || [];
+  const topAnnouncements = allAnnouncements.slice(0, 2);
+  const otherRecent = allAnnouncements.slice(2, 5);
 
   return (
     <section className="py-16 bg-gradient-to-br from-emerald-50 to-green-50">
@@ -61,7 +54,7 @@ const RecentAnnouncements = () => {
               <h3 className="text-xl font-bold text-gray-900">Top Announcements</h3>
             </div>
             <div className="space-y-4">
-              {trendingLoading ? (
+              {isLoading ? (
                 <div className="flex justify-center py-4">
                   <LoadingSpinner size="sm" />
                 </div>
@@ -79,12 +72,9 @@ const RecentAnnouncements = () => {
                     <h4 className="font-semibold text-gray-900 mb-2 line-clamp-2">{announcement.title}</h4>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center text-sm text-gray-600">
-                        <Building2 className="h-3 w-3 mr-1" />
-                        <span className="text-xs">{announcement.ministry_name}</span>
+                        <Building2 className="h-4 w-4 mr-1" />
+                        <span className="truncate">{announcement.ministry_name}</span>
                       </div>
-                      <Badge variant="outline" className="text-xs">
-                        {announcement.category_names?.[0] || 'General'}
-                      </Badge>
                     </div>
                   </div>
                 ))
@@ -98,12 +88,13 @@ const RecentAnnouncements = () => {
               <Clock className="h-6 w-6 text-emerald-600 mr-2" />
               <h3 className="text-xl font-bold text-gray-900">Recent Updates</h3>
             </div>
+            
             <div className="relative">
               {/* Timeline line */}
               <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-emerald-200 z-0"></div>
               
               <div className="space-y-6">
-                {recentLoading ? (
+                {isLoading ? (
                   <div className="flex justify-center py-4">
                     <LoadingSpinner size="sm" />
                   </div>

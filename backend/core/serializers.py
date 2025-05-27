@@ -85,61 +85,36 @@ class PressReleaseSerializer(serializers.ModelSerializer):
             'updated_at', 'available_languages', 'description'
         ]
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._translations_cache = {}
-        self._requested_language = None
-
     def _get_requested_language(self):
         """Get the requested language from the request context, default to 'en'."""
-        if self._requested_language is None:
-            request = self.context.get('request')
-            self._requested_language = request.query_params.get('language', 'en') if request else 'en'
-        return self._requested_language
-
-    def _get_translation(self, obj, language):
-        """Get cached translation for the given language."""
-        cache_key = (obj.pk, language)
-        if cache_key not in self._translations_cache:
-            self._translations_cache[cache_key] = obj.translations.filter(
-                text_type="summary",
-                language=language
-            ).first()
-        return self._translations_cache[cache_key]
+        request = self.context.get('request')
+        return request.query_params.get('language', 'en') if request else 'en'
 
     @extend_schema_field(OpenApiTypes.OBJECT)
     def get_available_languages(self, obj) -> list[str]:
         """Return a list of language codes that have translations."""
-        return list(set(obj.translations.values_list("language", flat=True)))
+        if hasattr(obj, 'available_langs'):
+            return obj.available_langs
+        return list(obj.translations.values_list("language", flat=True).distinct())
 
     @extend_schema_field(OpenApiTypes.STR)
     def get_description(self, obj) -> str | None:
-        """Return the summary translation in the requested language, fallback to English, then None."""
-        requested_lang = self._get_requested_language()
-        
-        # Try requested language
-        summary = self._get_translation(obj, requested_lang)
-        
-        # Fallback to English
-        if not summary and requested_lang != 'en':
-            summary = self._get_translation(obj, 'en')
-        
-        return summary.content if summary else None
+        """Return the summary translation in the requested language."""
+        if hasattr(obj, 'translation_content'):
+            return obj.translation_content
+        return None
 
     @extend_schema_field(OpenApiTypes.STR)
     def get_title(self, obj) -> str:
         """Return the title in requested language, fallback to English, then original title."""
         requested_lang = self._get_requested_language()
-        
-        # Try requested language
-        summary = self._get_translation(obj, requested_lang)
-        
-        # Fallback to English
-        if not summary and requested_lang != 'en':
-            summary = self._get_translation(obj, 'en')
-        
-        if summary and summary.title:
-            return summary.title
+
+        # if english, return original title
+        if requested_lang == 'en':
+            return obj.title
+
+        if hasattr(obj, 'translation_title'):
+            return obj.translation_title or obj.title
         
         return obj.title
 
@@ -174,10 +149,6 @@ class TranslatedTextSerializer(serializers.ModelSerializer):
     Provides translated versions of press releases in various Indian languages
     with different text types (summary, simplified, etc.).
     """
-
-    press_release_title = serializers.CharField(
-        source="press_release.title", read_only=True
-    )
     language_display = serializers.CharField(
         source="get_language_display", read_only=True
     )

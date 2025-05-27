@@ -23,7 +23,7 @@ from drf_spectacular.views import (
     SpectacularRedocView,
     SpectacularSwaggerView,
 )
-
+from django.conf import settings
 
 urlpatterns = [
     path("admin/secret-admin-panel/", admin.site.urls),
@@ -41,3 +41,9 @@ urlpatterns += [
     ),
     path("api/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
 ]
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns += [
+        path("__debug__/", include(debug_toolbar.urls)),
+    ]

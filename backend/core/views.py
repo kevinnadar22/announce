@@ -31,6 +31,8 @@ from .constants.choices import LANGUAGE_CHOICES
 from .pagination import CustomPageNumberPagination
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
+from django.db.models import Subquery, OuterRef
+from django.contrib.postgres.aggregates import ArrayAgg
 
 
 @extend_schema(
@@ -94,7 +96,6 @@ def unique_pib_hq(request):
         .distinct()
     )
     return Response({"pib_hq": list(unique_values)})
-
 
 
 @extend_schema(
@@ -211,16 +212,6 @@ def all_languages(request):
     )
 )
 class PressReleaseList(generics.ListAPIView):
-    queryset = (
-        PressRelease.objects.all()
-        .select_related('ministry')
-        .prefetch_related(
-            'translations',
-            'audience_type',
-            'category'
-        )
-        .order_by("-date_published")
-    )
     serializer_class = PressReleaseSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = PressReleaseFilter
@@ -228,6 +219,43 @@ class PressReleaseList(generics.ListAPIView):
     ordering_fields = ["date_published"]
     search_fields = ["title", "original_text"]
     pagination_class = CustomPageNumberPagination
+
+    def get_queryset(self):
+        # Get base queryset with related fields
+        queryset = (
+            PressRelease.objects.all()
+            .select_related("ministry")
+            .prefetch_related("audience_type", "category")
+        )
+
+        # Annotate available languages
+        queryset = queryset.annotate(
+            available_langs=ArrayAgg('translations__language', distinct=True)
+        )
+
+        # Get requested language
+        language = self.request.query_params.get('language', 'en')
+
+        # Annotate translations for the requested language
+        queryset = queryset.annotate(
+            translation_content=Subquery(
+                TranslatedText.objects.filter(
+                    press_release=OuterRef('pk'),
+                    language=language,
+                    text_type='summary'
+                ).values('content')[:1]
+            ),
+            translation_title=Subquery(
+                TranslatedText.objects.filter(
+                    press_release=OuterRef('pk'),
+                    language=language,
+                    text_type='summary'
+                ).values('title')[:1]
+            )
+        )
+
+        return queryset.order_by("-date_published")
+
 
 @method_decorator(cache_page(60 * 15), name="get")
 @extend_schema_view(
@@ -252,8 +280,44 @@ class PressReleaseList(generics.ListAPIView):
     )
 )
 class PressReleaseDetail(generics.RetrieveAPIView):
-    queryset = PressRelease.objects.all()
     serializer_class = PressReleaseSerializer
+
+    def get_queryset(self):
+        # Get base queryset with related fields
+        queryset = (
+            PressRelease.objects.all()
+            .select_related("ministry")
+            .prefetch_related("audience_type", "category")
+        )
+
+        # Annotate available languages
+        queryset = queryset.annotate(
+            available_langs=ArrayAgg('translations__language', distinct=True)
+        )
+
+        # Get requested language
+        language = self.request.query_params.get('language', 'en')
+
+        # Annotate translations for the requested language
+        queryset = queryset.annotate(
+            translation_content=Subquery(
+                TranslatedText.objects.filter(
+                    press_release=OuterRef('pk'),
+                    language=language,
+                    text_type='summary'
+                ).values('content')[:1]
+            ),
+            translation_title=Subquery(
+                TranslatedText.objects.filter(
+                    press_release=OuterRef('pk'),
+                    language=language,
+                    text_type='summary'
+                ).values('title')[:1]
+            )
+        )
+
+        return queryset
+
 
 @method_decorator(cache_page(60 * 5), name="get")
 @extend_schema_view(
@@ -284,10 +348,11 @@ class PressReleaseDetail(generics.RetrieveAPIView):
     )
 )
 class TranslatedTextList(generics.ListAPIView):
-    queryset = TranslatedText.objects.all().order_by("-created_at")
+    queryset = TranslatedText.objects.select_related('press_release').all().order_by("-created_at")
     serializer_class = TranslatedTextSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["press_release", "language", "text_type"]
+
 
 @method_decorator(cache_page(60 * 5), name="get")
 @extend_schema_view(
