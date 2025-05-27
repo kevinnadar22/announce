@@ -281,10 +281,10 @@ const AnnouncementDetail = () => {
           {/* Main Content */}
           <div className="lg:col-span-3">
             {/* Enhanced Header Section */}
-            <div className="bg-white rounded-2xl p-10 mb-10 shadow-lg border border-gray-100 relative">
+            <div className="bg-white rounded-2xl p-10 mb-10 shadow-lg border border-gray-100 relative overflow-hidden">
               {/* Subtle background pattern */}
               <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/50 via-white to-green-50/30"></div>
-              <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-100/20 rounded-full -translate-y-32 translate-x-32"></div>
+              <div className="absolute top-0 right-0 w-32 h-32 sm:w-48 sm:h-48 lg:w-64 lg:h-64 bg-emerald-100/20 rounded-full -translate-y-16 translate-x-16 sm:-translate-y-24 sm:translate-x-24 lg:-translate-y-32 lg:translate-x-32 hidden sm:block"></div>
               
               <div className="relative z-10">
                 {/* Top section with Ministry Badge and Language Selector */}
