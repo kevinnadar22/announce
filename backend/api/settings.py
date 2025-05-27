@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-s&2z%d$z73u%-mf08oki-o(q7r6m&v(mlxr5@m-1@q*-z(l2@j"
+SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -230,21 +230,88 @@ if not DEBUG:
     X_FRAME_OPTIONS = "DENY"
 
 
+# Get log level from environment variable, default to WARNING in production
+LOG_LEVEL = config("LOG_LEVEL", default="WARNING" if not DEBUG else "INFO")
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
+            "style": "{",
+        },
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
+        },
+    },
     "handlers": {
         "file": {
             "level": "WARNING",
             "class": "logging.FileHandler",
             "filename": BASE_DIR / "django.log",
+            "formatter": "verbose",
+        },
+        "console": {
+            "level": LOG_LEVEL,
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+        },
+        "null": {
+            "class": "logging.NullHandler",
         },
     },
     "loggers": {
         "django": {
+            "handlers": ["file", "console"],
+            "level": "WARNING",
+            "propagate": False,
+        },
+        "django.server": {
+            "handlers": ["null"] if not DEBUG else ["console"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+        "django.request": {
+            "handlers": ["file"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+        "gunicorn.access": {
+            "handlers": ["null"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+        "gunicorn.error": {
             "handlers": ["file"],
             "level": "WARNING",
-            "propagate": True,
+            "propagate": False,
         },
+        "uvicorn.access": {
+            "handlers": ["null"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+        "uvicorn.error": {
+            "handlers": ["file"],
+            "level": "WARNING",
+            "propagate": False,
+        },
+        # Suppress other common noisy loggers
+        "urllib3.connectionpool": {
+            "handlers": ["null"],
+            "level": "WARNING",
+            "propagate": False,
+        },
+        "requests.packages.urllib3": {
+            "handlers": ["null"],
+            "level": "WARNING",
+            "propagate": False,
+        },
+    },
+    "root": {
+        "level": "WARNING",
+        "handlers": ["console"],
     },
 }

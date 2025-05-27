@@ -1,4 +1,4 @@
-web: gunicorn api.wsgi:application --bind 0.0.0.0:$PORT --workers 3 --worker-class sync --timeout 30 --keep-alive 2 --max-requests 1000 --max-requests-jitter 100 --log-level info
-worker: celery -A api worker --loglevel=info --concurrency=4 -E
-beat: celery -A api beat --loglevel=info
-flower: celery -A api flower --port=5555 --address=0.0.0.0 --basic_auth=admin:123456 --loglevel=info
+web: gunicorn api.wsgi:application -c gunicorn.conf.py
+worker: celery -A api worker --loglevel=warning --concurrency=4 -E
+beat: celery -A api beat --loglevel=warning
+flower: celery -A api flower --port=5555 --address=0.0.0.0 --basic_auth=admin:123456 --loglevel=warning
