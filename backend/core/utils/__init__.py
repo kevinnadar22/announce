@@ -9,4 +9,3 @@ from .scraper import (
     get_press_release_metadata,
     get_press_release_content,
 )
-from .translate import translate_text

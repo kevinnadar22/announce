@@ -8,7 +8,6 @@ from .utils import (
     generate_oversimplified_text,
     generate_summary,
     generate_keypoints,
-    translate_text,
     translate_text_gemini,
 )
 from .constants import LANGUAGE_CHOICES
