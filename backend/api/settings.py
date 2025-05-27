@@ -25,14 +25,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-s&2z%d$z73u%-mf08oki-o(q7r6m&v(mlxr5@m-1@q*-z(l2@j"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
+
 # enable debug toolbar
 INTERNAL_IPS = [
     "127.0.0.1",
     "localhost",
 ]
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = list(config("ALLOWED_HOSTS", default="").split(","))
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",  # React dev server
