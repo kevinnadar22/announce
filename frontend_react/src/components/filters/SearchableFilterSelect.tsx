@@ -51,17 +51,34 @@ const SearchableFilterSelect = ({
   allOptionLabel = "All"
 }: SearchableFilterSelectProps) => {
   const [open, setOpen] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
   
   // Create the options list with "All" option if enabled
   const allOptions = showAllOption 
     ? [{ value: "", label: allOptionLabel }, ...options]
     : options;
   
+  // Filter options based on search value
+  const filteredOptions = searchValue
+    ? allOptions.filter(option => 
+        option.label.toLowerCase().includes(searchValue.toLowerCase())
+      )
+    : allOptions;
+  
   const selectedOption = allOptions.find(option => option.value === value);
   const selectedDisplay = selectedOption ? createTruncatedDisplay(selectedOption.label, maxLabelLength) : null;
 
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen);
+    if (!newOpen) {
+      setShowSearch(false);
+      setSearchValue("");
+    }
+  };
+
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
@@ -94,39 +111,55 @@ const SearchableFilterSelect = ({
       </PopoverTrigger>
       <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
         <Command shouldFilter={false}>
-          <CommandInput 
-            placeholder={searchPlaceholder}
-            autoFocus={false}
-          />
+          {!showSearch ? (
+            <div className="p-2 border-b border-gray-200">
+              <button
+                className="w-full text-left text-sm text-gray-600 hover:text-gray-900 py-2 px-3 hover:bg-gray-50 rounded-md transition-colors"
+                onClick={() => setShowSearch(true)}
+              >
+                🔍 Search...
+              </button>
+            </div>
+          ) : (
+            <div className="p-2 border-b border-gray-200">
+              <input
+                type="text"
+                placeholder={searchPlaceholder}
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                autoFocus
+              />
+            </div>
+          )}
           <CommandList>
-            <CommandEmpty>No results found.</CommandEmpty>
-            <CommandGroup>
-              {allOptions.map((option) => (
-                <CommandItem
-                  key={option.value}
-                  value={option.label}
-                  onSelect={(selectedValue) => {
-                    // Find the option by label since that's what onSelect provides
-                    const selectedOption = allOptions.find(opt => opt.label === selectedValue);
-                    if (selectedOption) {
-                      onValueChange(selectedOption.value === value ? "" : selectedOption.value);
-                    }
-                    setOpen(false);
-                  }}
-                >
-                  <div className="flex items-center space-x-2 w-full">
-                    {option.icon && <option.icon className="h-4 w-4 flex-shrink-0" />}
-                    <span className="flex-1">{option.label}</span>
-                    <Check
-                      className={cn(
-                        "ml-auto h-4 w-4",
-                        value === option.value ? "opacity-100" : "opacity-0"
-                      )}
-                    />
-                  </div>
-                </CommandItem>
-              ))}
-            </CommandGroup>
+            {filteredOptions.length === 0 ? (
+              <div className="py-6 text-center text-sm text-gray-600">No results found.</div>
+            ) : (
+              <CommandGroup>
+                {filteredOptions.map((option) => (
+                  <CommandItem
+                    key={option.value}
+                    value={option.label}
+                    onSelect={() => {
+                      onValueChange(option.value === value ? "" : option.value);
+                      setOpen(false);
+                    }}
+                  >
+                    <div className="flex items-center space-x-2 w-full">
+                      {option.icon && <option.icon className="h-4 w-4 flex-shrink-0" />}
+                      <span className="flex-1">{option.label}</span>
+                      <Check
+                        className={cn(
+                          "ml-auto h-4 w-4",
+                          value === option.value ? "opacity-100" : "opacity-0"
+                        )}
+                      />
+                    </div>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            )}
           </CommandList>
         </Command>
       </PopoverContent>
