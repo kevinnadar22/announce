@@ -65,7 +65,8 @@ const AnnouncementsSection = () => {
     if (dateRange?.from) {
       if (!dateRange.to) {
         // For single date selection, use date_published parameter
-        params.date_published = dateRange.from.toISOString().substring(0, 10); // YYYY-MM-DD
+        // Format as YYYY-MM-DD for exact date match
+        params.date_published = dateRange.from.toISOString().split('T')[0];
       } else {
         // For date range, use min and max parameters
         // Set start of day for min date (00:00:00)

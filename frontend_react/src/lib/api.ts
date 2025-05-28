@@ -79,10 +79,8 @@ export interface PressReleaseListParams {
   category?: number;
   category_name?: string;
   date_published?: string;
-  date_published__gte?: string;
-  date_published__lte?: string;
-  date_published_max?: string;
   date_published_min?: string;
+  date_published_max?: string;
   has_translation_language?: string[];
   id?: number;
   language?: string;
