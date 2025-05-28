@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 from decouple import config
 from datetime import timedelta
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -252,6 +253,10 @@ if not DEBUG:
 # Get log level from environment variable, default to WARNING in production
 LOG_LEVEL = config("LOG_LEVEL", default="WARNING" if not DEBUG else "INFO")
 
+# Create logs directory if it doesn't exist
+LOGS_DIR = BASE_DIR / "logs"
+LOGS_DIR.mkdir(exist_ok=True)
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -266,12 +271,6 @@ LOGGING = {
         },
     },
     "handlers": {
-        "file": {
-            "level": "WARNING",
-            "class": "logging.FileHandler",
-            "filename": BASE_DIR / "django.log",
-            "formatter": "verbose",
-        },
         "console": {
             "level": LOG_LEVEL,
             "class": "logging.StreamHandler",
@@ -283,7 +282,7 @@ LOGGING = {
     },
     "loggers": {
         "django": {
-            "handlers": ["file", "console"],
+            "handlers": ["console"],
             "level": "WARNING",
             "propagate": False,
         },
@@ -293,7 +292,7 @@ LOGGING = {
             "propagate": False,
         },
         "django.request": {
-            "handlers": ["file"],
+            "handlers": ["console"],
             "level": "ERROR",
             "propagate": False,
         },
@@ -303,7 +302,7 @@ LOGGING = {
             "propagate": False,
         },
         "gunicorn.error": {
-            "handlers": ["file"],
+            "handlers": ["console"],
             "level": "WARNING",
             "propagate": False,
         },
@@ -313,7 +312,7 @@ LOGGING = {
             "propagate": False,
         },
         "uvicorn.error": {
-            "handlers": ["file"],
+            "handlers": ["console"],
             "level": "WARNING",
             "propagate": False,
         },
@@ -334,6 +333,32 @@ LOGGING = {
         "handlers": ["console"],
     },
 }
+
+# Try to add file logging if possible (for production)
+if not DEBUG:
+    try:
+        # Test if we can write to the logs directory
+        test_file = LOGS_DIR / "test.log"
+        test_file.touch()
+        test_file.unlink()
+        
+        # If successful, add file handler
+        LOGGING["handlers"]["file"] = {
+            "level": "WARNING",
+            "class": "logging.FileHandler",
+            "filename": LOGS_DIR / "django.log",
+            "formatter": "verbose",
+        }
+        
+        # Update loggers to use file handler for important logs
+        LOGGING["loggers"]["django"]["handlers"] = ["file", "console"]
+        LOGGING["loggers"]["django.request"]["handlers"] = ["file"]
+        LOGGING["loggers"]["gunicorn.error"]["handlers"] = ["file"]
+        LOGGING["loggers"]["uvicorn.error"]["handlers"] = ["file"]
+        
+    except (OSError, PermissionError):
+        # File logging not available, stick with console logging
+        pass
 
 # Security Settings
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
