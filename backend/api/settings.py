@@ -253,9 +253,8 @@ if not DEBUG:
 # Get log level from environment variable, default to WARNING in production
 LOG_LEVEL = config("LOG_LEVEL", default="WARNING" if not DEBUG else "INFO")
 
-# Create logs directory if it doesn't exist
+# Define logs directory path
 LOGS_DIR = BASE_DIR / "logs"
-LOGS_DIR.mkdir(exist_ok=True)
 
 LOGGING = {
     "version": 1,
@@ -335,13 +334,8 @@ LOGGING = {
 }
 
 # Try to add file logging if possible (for production)
-if not DEBUG:
+if not DEBUG and LOGS_DIR.exists() and os.access(LOGS_DIR, os.W_OK):
     try:
-        # Test if we can write to the logs directory
-        test_file = LOGS_DIR / "test.log"
-        test_file.touch()
-        test_file.unlink()
-        
         # If successful, add file handler
         LOGGING["handlers"]["file"] = {
             "level": "WARNING",
