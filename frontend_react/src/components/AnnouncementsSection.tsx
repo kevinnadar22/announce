@@ -61,12 +61,27 @@ const AnnouncementsSection = () => {
     if (selectedLocation) {
       params.pib_hq = selectedLocation;
     }
-    if (dateRange?.from) {
-      params.date_published_min = dateRange.from.toISOString().substring(0, 10); // YYYY-MM-DD
-    }
 
-    if (dateRange?.to) {
-      params.date_published_max = dateRange.to.toISOString().substring(0, 10); // YYYY-MM-DD  
+    if (dateRange?.from) {
+      // For single date selection, use the same date for both min and max
+      const fromDate = dateRange.from;
+      const toDate = dateRange.to || dateRange.from;
+      
+      // Set start of day for min date (00:00:00)
+      params.date_published_min = new Date(
+        fromDate.getFullYear(),
+        fromDate.getMonth(),
+        fromDate.getDate(),
+        0, 0, 0
+      ).toISOString();
+      
+      // Set end of day for max date (23:59:59)
+      params.date_published_max = new Date(
+        toDate.getFullYear(),
+        toDate.getMonth(),
+        toDate.getDate(),
+        23, 59, 59
+      ).toISOString();
     }
 
     if (selectedLanguage) {
