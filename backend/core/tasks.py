@@ -1,4 +1,4 @@
-from celery import shared_task, group
+from celery import shared_task, group, chord
 from typing import Optional, List, Dict, Any
 from .models import PressRelease, TranslatedText, Ministry
 from .utils import (
@@ -12,6 +12,7 @@ from .utils import (
 )
 from .constants import LANGUAGE_CHOICES
 import logging
+
 
 logger = logging.getLogger(__name__)
 
@@ -134,6 +135,7 @@ def process_single_press_release(
                 "ministry": ministry_obj,
                 "date_published": date_published,  # Pass direct here
                 "pib_hq": pib_hq,  # Pass direct here
+                # active defaults to False in the model
             },
         )
 
@@ -148,12 +150,16 @@ def process_single_press_release(
             pr, "en", "summary", summary.eye_catching_summary_sentence, title=headline
         )
 
+        # Generate all text variations upfront to avoid scope issues
+        simplified_text = generate_simplified_text(original_text)
+        oversimplified_text = generate_oversimplified_text(original_text)
+        keypoints = generate_keypoints(original_text)
+
         # Build a group of tasks for processing and translating different text types
         translation_tasks = []
 
         # English-specific processing and saving
         if not is_text_type_present(pr, "simplified", "en"):
-            simplified_text = generate_simplified_text(original_text)
             translation_tasks.append(
                 process_and_save_translated_batch.s(
                     pr.id,
@@ -169,7 +175,6 @@ def process_single_press_release(
             )
 
         if not is_text_type_present(pr, "oversimplified", "en"):
-            oversimplified_text = generate_oversimplified_text(original_text)
             translation_tasks.append(
                 process_and_save_translated_batch.s(
                     pr.id,
@@ -185,7 +190,6 @@ def process_single_press_release(
             )
 
         if not is_text_type_present(pr, "keypoints", "en"):
-            keypoints = generate_keypoints(original_text)
             translation_tasks.append(
                 process_and_save_translated_batch.s(
                     pr.id,
@@ -257,10 +261,34 @@ def process_single_press_release(
                     )
                 )
 
-        # Execute all translation and saving tasks in parallel
-        group(translation_tasks).apply_async()
+        # Execute all translation and saving tasks in parallel, then set active
+        if translation_tasks:
+            # Use chord to run all tasks in parallel and then execute the final task
+            chord(translation_tasks)(set_press_release_active.s(pr.id))
+        else:
+            # If no translation tasks, just set active directly
+            set_press_release_active.delay(pr.id)
     except Exception as exc:
         logger.error(f"Error processing press release {url}: {exc}", exc_info=True)
+
+
+@shared_task(bind=True)
+def set_press_release_active(self, pr_id: int):
+    """Set the press release to active after all translations are complete."""
+    try:
+        pr = PressRelease.objects.get(id=pr_id)
+        if not pr.active:  # Only update if not already active
+            pr.active = True
+            pr.save()
+            logger.info(f"Press release {pr_id} set to active")
+        else:
+            logger.info(f"Press release {pr_id} was already active")
+    except PressRelease.DoesNotExist:
+        logger.error(f"PressRelease with ID {pr_id} not found when trying to set active")
+        raise
+    except Exception as exc:
+        logger.error(f"Error setting press release {pr_id} to active: {exc}", exc_info=True)
+        raise
 
 
 @shared_task(bind=True)

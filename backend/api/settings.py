@@ -106,16 +106,25 @@ WSGI_APPLICATION = "api.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": config("DB_NAME"),
-        "USER": config("DB_USER"),
-        "PASSWORD": config("DB_PASSWORD"),
-        "HOST": config("DB_HOST"),
-        "PORT": config("DB_PORT"),
+
+if not DEBUG:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": config("DB_NAME"),
+            "USER": config("DB_USER"),
+            "PASSWORD": config("DB_PASSWORD"),
+            "HOST": config("DB_HOST"),
+            "PORT": config("DB_PORT"),
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 CACHES = {
     "default": {
@@ -124,14 +133,6 @@ CACHES = {
     }
 }
 
-
-# # use sqlite
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -343,19 +344,19 @@ if not DEBUG and LOGS_DIR.exists() and os.access(LOGS_DIR, os.W_OK):
             "filename": LOGS_DIR / "django.log",
             "formatter": "verbose",
         }
-        
+
         # Update loggers to use file handler for important logs
         LOGGING["loggers"]["django"]["handlers"] = ["file", "console"]
         LOGGING["loggers"]["django.request"]["handlers"] = ["file"]
         LOGGING["loggers"]["gunicorn.error"]["handlers"] = ["file"]
         LOGGING["loggers"]["uvicorn.error"]["handlers"] = ["file"]
-        
+
     except (OSError, PermissionError):
         # File logging not available, stick with console logging
         pass
 
 # Security Settings
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_SSL_REDIRECT = False  # Set to True only if you have SSL configured
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True

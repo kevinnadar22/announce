@@ -227,7 +227,7 @@ class PressReleaseList(generics.ListAPIView):
 
         # Get base queryset with related fields and translations in a single query
         queryset = (
-            PressRelease.objects.all()
+            PressRelease.objects.filter(active=True)
             .select_related("ministry")
             # Optimize prefetch_related with specific fields
             .prefetch_related(
@@ -271,7 +271,7 @@ class PressReleaseList(generics.ListAPIView):
         ).order_by("-date_published")
 
 
-@method_decorator(cache_page(60 * 15), name="get")
+
 @extend_schema_view(
     get=extend_schema(
         tags=["Press Releases"],
@@ -299,7 +299,7 @@ class PressReleaseDetail(generics.RetrieveAPIView):
     def get_queryset(self):
         # Get base queryset with related fields
         queryset = (
-            PressRelease.objects.all()
+            PressRelease.objects.filter(active=True)
             .select_related("ministry")
             .prefetch_related("audience_type", "category")
         )
@@ -333,7 +333,7 @@ class PressReleaseDetail(generics.RetrieveAPIView):
         return queryset
 
 
-@method_decorator(cache_page(60 * 5), name="get")
+
 @extend_schema_view(
     get=extend_schema(
         tags=["Translations"],

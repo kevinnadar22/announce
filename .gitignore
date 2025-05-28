@@ -183,3 +183,4 @@ todo.txt
 .cursorrules
 prod.env
 backend/data.json
+backend/test.py

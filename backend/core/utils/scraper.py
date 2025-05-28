@@ -35,7 +35,7 @@ def get_press_release_metadata():
         if not ministry_tag:
             continue
 
-        ministry = ministry_tag.find("h3").text.strip()
+        ministry = ministry_tag.find("h3").text.strip().replace("  ", " ")
 
         for li in ministry_tag.find("ul").find_all("li"):
             link = li.find("a")
