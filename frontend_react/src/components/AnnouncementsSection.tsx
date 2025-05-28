@@ -63,25 +63,27 @@ const AnnouncementsSection = () => {
     }
 
     if (dateRange?.from) {
-      // For single date selection, use the same date for both min and max
-      const fromDate = dateRange.from;
-      const toDate = dateRange.to || dateRange.from;
-      
-      // Set start of day for min date (00:00:00)
-      params.date_published_min = new Date(
-        fromDate.getFullYear(),
-        fromDate.getMonth(),
-        fromDate.getDate(),
-        0, 0, 0
-      ).toISOString();
-      
-      // Set end of day for max date (23:59:59)
-      params.date_published_max = new Date(
-        toDate.getFullYear(),
-        toDate.getMonth(),
-        toDate.getDate(),
-        23, 59, 59
-      ).toISOString();
+      if (!dateRange.to) {
+        // For single date selection, use date_published parameter
+        params.date_published = dateRange.from.toISOString().substring(0, 10); // YYYY-MM-DD
+      } else {
+        // For date range, use min and max parameters
+        // Set start of day for min date (00:00:00)
+        params.date_published_min = new Date(
+          dateRange.from.getFullYear(),
+          dateRange.from.getMonth(),
+          dateRange.from.getDate(),
+          0, 0, 0
+        ).toISOString();
+        
+        // Set end of day for max date (23:59:59)
+        params.date_published_max = new Date(
+          dateRange.to.getFullYear(),
+          dateRange.to.getMonth(),
+          dateRange.to.getDate(),
+          23, 59, 59
+        ).toISOString();
+      }
     }
 
     if (selectedLanguage) {
