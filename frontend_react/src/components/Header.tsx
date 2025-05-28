@@ -1,12 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
 
 const Header = () => {
-  const navigate = useNavigate();
-
   const handleLogoClick = () => {
-    navigate('/');
-    window.scrollTo(0, 0);
+    window.location.href = '/';
   };
 
   return (
