@@ -31,8 +31,12 @@ DEBUG = config("DEBUG") == "True"
 INTERNAL_IPS = [
     "127.0.0.1",
     "localhost",
-    "announce-api-1748374064-1a1b72e3c3ca.herokuapp.com" # just for testing
 ]
+
+# Configuration for Debug Toolbar
+DEBUG_TOOLBAR_CONFIG = {
+    "SHOW_TOOLBAR_CALLBACK": lambda request: DEBUG,
+}
 
 if DEBUG:
     ALLOWED_HOSTS = ["*"]
