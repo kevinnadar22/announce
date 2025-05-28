@@ -22,7 +22,7 @@ from django.conf import settings
 
 urlpatterns = [
     path("admin/secret-admin-panel/", admin.site.urls),
-    path("api/", include("core.urls")),
+    path("v1/", include("core.urls")),
     path("", health_check, name="health-check"),
 ]
 
