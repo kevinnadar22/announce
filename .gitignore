@@ -182,3 +182,4 @@ todo.txt
 # Cursor
 .cursorrules
 prod.env
+backend/data.json

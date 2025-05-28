@@ -1,5 +1,7 @@
 from django.db import models
 from .constants import LANGUAGE_CHOICES, MINISTRY_MAP_CONSOLIDATED, TEXT_TYPE_CHOICES
+from django.utils import timezone
+from datetime import datetime
 
 
 # Create your models here.
@@ -50,7 +52,10 @@ class PressRelease(models.Model):
                 fields=['date_published'],
                 name='recent_press_releases_idx',
                 condition=models.Q(
-                    date_published__gte='2024-01-01'
+                    date_published__gte=timezone.make_aware(
+                        datetime(2024, 1, 1),
+                        timezone=timezone.get_current_timezone()
+                    )
                 )
             ),
         ]
