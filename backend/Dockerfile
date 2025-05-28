@@ -26,6 +26,8 @@ COPY . .
 
 # Create staticfiles directory
 RUN mkdir -p /app/staticfiles
+# run collectstatic
+RUN python manage.py collectstatic --noinput
 
 # Create logs directory with proper permissions
 RUN mkdir -p /app/logs
