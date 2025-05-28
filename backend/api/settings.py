@@ -45,6 +45,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:8000",
     "https://announce-sage.vercel.app",
+    "https://announce.org.in",
+    "https://www.announce.org.in",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
