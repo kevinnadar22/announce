@@ -38,11 +38,7 @@ DEBUG_TOOLBAR_CONFIG = {
     "SHOW_TOOLBAR_CALLBACK": lambda request: DEBUG,
 }
 
-ALLOWED_HOSTS = [
-    "127.0.0.1",
-    "localhost",
-    "test-test.onh2jt.easypanel.host",
-]
+ALLOWED_HOSTS = ["*"] if DEBUG else config("ALLOWED_HOSTS", default="").split(",")
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
@@ -50,6 +46,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:8000",
     "http://test-test.onh2jt.easypanel.host",
     "https://test-test.onh2jt.easypanel.host",
+    "https://announce-sage.vercel.app",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
