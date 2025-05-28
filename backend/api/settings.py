@@ -38,10 +38,7 @@ DEBUG_TOOLBAR_CONFIG = {
     "SHOW_TOOLBAR_CALLBACK": lambda request: DEBUG,
 }
 
-if DEBUG:
-    ALLOWED_HOSTS = ["*"]
-else:
-    ALLOWED_HOSTS = list(config("ALLOWED_HOSTS", default="").split(","))
+ALLOWED_HOSTS = ["*"] if DEBUG else config("ALLOWED_HOSTS", default="").split(",")
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",  # React dev server

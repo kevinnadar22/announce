@@ -33,6 +33,7 @@ from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 from django.db.models import Subquery, OuterRef
 from django.contrib.postgres.aggregates import ArrayAgg
+from django.db import models
 
 
 @extend_schema(
@@ -221,40 +222,53 @@ class PressReleaseList(generics.ListAPIView):
     pagination_class = CustomPageNumberPagination
 
     def get_queryset(self):
-        # Get base queryset with related fields
-        queryset = (
-            PressRelease.objects.all()
-            .select_related("ministry")
-            .prefetch_related("audience_type", "category")
-        )
-
-        # Annotate available languages
-        queryset = queryset.annotate(
-            available_langs=ArrayAgg('translations__language', distinct=True)
-        )
-
         # Get requested language
         language = self.request.query_params.get('language', 'en')
 
-        # Annotate translations for the requested language
-        queryset = queryset.annotate(
-            translation_content=Subquery(
-                TranslatedText.objects.filter(
-                    press_release=OuterRef('pk'),
-                    language=language,
-                    text_type='summary'
-                ).values('content')[:1]
-            ),
-            translation_title=Subquery(
-                TranslatedText.objects.filter(
-                    press_release=OuterRef('pk'),
-                    language=language,
-                    text_type='summary'
-                ).values('title')[:1]
+        # Get base queryset with related fields and translations in a single query
+        queryset = (
+            PressRelease.objects.all()
+            .select_related("ministry")
+            # Optimize prefetch_related with specific fields
+            .prefetch_related(
+                models.Prefetch(
+                    'audience_type',
+                    queryset=AudienceType.objects.only('id', 'name').defer('created_at', 'updated_at')
+                ),
+                models.Prefetch(
+                    'category',
+                    queryset=Category.objects.only('id', 'name').defer('created_at', 'updated_at')
+                )
             )
         )
 
-        return queryset.order_by("-date_published")
+        # Add translations and available languages
+        translation_subquery = TranslatedText.objects.filter(
+            press_release=models.OuterRef('pk'),
+            language=language,
+            text_type='summary'
+        )
+
+        queryset = queryset.annotate(
+            # Get available languages
+            available_langs=ArrayAgg(
+                'translations__language',
+                distinct=True,
+                filter=models.Q(translations__language__isnull=False)
+            ),
+            # Get translation content and title directly
+            translation_content=models.Subquery(
+                translation_subquery.values('content')[:1]
+            ),
+            translation_title=models.Subquery(
+                translation_subquery.values('title')[:1]
+            )
+        )
+
+        return queryset.only(
+            'id', 'title', 'original_text', 'source_url', 'date_published',
+            'pib_hq', 'ministry_id', 'created_at', 'updated_at'
+        ).order_by("-date_published")
 
 
 @method_decorator(cache_page(60 * 15), name="get")
