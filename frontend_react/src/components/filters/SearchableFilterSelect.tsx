@@ -93,8 +93,11 @@ const SearchableFilterSelect = ({
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
-        <Command>
-          <CommandInput placeholder={searchPlaceholder} />
+        <Command shouldFilter={false}>
+          <CommandInput 
+            placeholder={searchPlaceholder}
+            autoFocus={false}
+          />
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup>

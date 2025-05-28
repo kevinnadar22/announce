@@ -112,6 +112,10 @@ class Command(BaseCommand):
         for press_release in PressRelease.objects.all():
             press_release.audience_type.clear()
             press_release.category.clear()
+
+        # delete all audience types and categories
+        AudienceType.objects.all().delete()
+        Category.objects.all().delete()
         
         self.stdout.write(self.style.SUCCESS('✓ Cleared all existing assignments'))
 

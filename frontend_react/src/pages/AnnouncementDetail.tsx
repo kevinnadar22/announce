@@ -319,10 +319,10 @@ const AnnouncementDetail = () => {
                 
                 {/* Title and Description */}
                 <div className="mb-8">
-                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight tracking-tight">
+                  <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight tracking-tight">
                     {pressRelease.title}
                   </h1>
-                  <p className="text-xl text-gray-600 leading-relaxed font-light max-w-4xl">
+                  <p className="text-lg sm:text-xl text-gray-600 leading-relaxed font-light max-w-4xl">
                     {pressRelease.description}
                   </p>
                 </div>
