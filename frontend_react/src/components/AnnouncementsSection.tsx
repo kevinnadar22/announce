@@ -65,25 +65,23 @@ const AnnouncementsSection = () => {
     if (dateRange?.from) {
       if (!dateRange.to) {
         // For single date selection, use date_published parameter
-        // Format as YYYY-MM-DD for exact date match
-        params.date_published = dateRange.from.toISOString().split('T')[0];
+        // Format as YYYY-MM-DD without timezone conversion
+        const year = dateRange.from.getFullYear();
+        const month = String(dateRange.from.getMonth() + 1).padStart(2, '0');
+        const day = String(dateRange.from.getDate()).padStart(2, '0');
+        params.date_published = `${year}-${month}-${day}`;
       } else {
         // For date range, use min and max parameters
-        // Set start of day for min date (00:00:00)
-        params.date_published_min = new Date(
-          dateRange.from.getFullYear(),
-          dateRange.from.getMonth(),
-          dateRange.from.getDate(),
-          0, 0, 0
-        ).toISOString();
+        // Format dates as YYYY-MM-DD for date range queries
+        const fromYear = dateRange.from.getFullYear();
+        const fromMonth = String(dateRange.from.getMonth() + 1).padStart(2, '0');
+        const fromDay = String(dateRange.from.getDate()).padStart(2, '0');
+        params.date_published_min = `${fromYear}-${fromMonth}-${fromDay}`;
         
-        // Set end of day for max date (23:59:59)
-        params.date_published_max = new Date(
-          dateRange.to.getFullYear(),
-          dateRange.to.getMonth(),
-          dateRange.to.getDate(),
-          23, 59, 59
-        ).toISOString();
+        const toYear = dateRange.to.getFullYear();
+        const toMonth = String(dateRange.to.getMonth() + 1).padStart(2, '0');
+        const toDay = String(dateRange.to.getDate()).padStart(2, '0');
+        params.date_published_max = `${toYear}-${toMonth}-${toDay}`;
       }
     }
 
