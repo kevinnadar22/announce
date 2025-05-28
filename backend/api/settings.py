@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = config("DEBUG") == "True"
 
 # enable debug toolbar
 INTERNAL_IPS = [
@@ -33,7 +33,10 @@ INTERNAL_IPS = [
     "localhost",
 ]
 
-ALLOWED_HOSTS = list(config("ALLOWED_HOSTS", default="").split(","))
+if DEBUG:
+    ALLOWED_HOSTS = ["*"]
+else:
+    ALLOWED_HOSTS = list(config("ALLOWED_HOSTS", default="").split(","))
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",  # React dev server
@@ -173,6 +176,12 @@ REST_FRAMEWORK = {
         "anon": "1000/day",
     },
 }
+
+if not DEBUG:
+    REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = [
+        "rest_framework.renderers.JSONRenderer",
+    ]
+
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Government Press Release API",
