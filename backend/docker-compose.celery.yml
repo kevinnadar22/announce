@@ -1,0 +1,20 @@
+services:
+  # Celery worker
+  celery-worker:
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    command: celery -A api worker --loglevel=info --concurrency=4 -E
+
+  # Celery beat scheduler
+  celery-beat:
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    command: celery -A api beat --loglevel=info 
