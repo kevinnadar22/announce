@@ -31,6 +31,7 @@ DEBUG = config("DEBUG") == "True"
 INTERNAL_IPS = [
     "127.0.0.1",
     "localhost",
+    "announce-api-1748374064-1a1b72e3c3ca.herokuapp.com" # just for testing
 ]
 
 if DEBUG:
