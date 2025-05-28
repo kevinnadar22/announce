@@ -1,34 +1,17 @@
 version: '3.8'
 
 services:
-  # Nginx reverse proxy
-  nginx:
-    image: nginx:alpine
-    restart: unless-stopped
-    ports:
-      - "8080:80"
-      - "8443:443"
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-    depends_on:
-      - web
-      - flower
-    networks:
-      - app-network
-
   # Django web application
   web:
     build: .
     restart: unless-stopped
-    expose:
-      - "${PORT}"
+    ports:
+      - "${PORT}:${PORT}"
     env_file:
       - .env
     volumes:
       - .:/app
     command: gunicorn api.wsgi:application -c gunicorn.conf.py
-    networks:
-      - app-network
 
   # Celery worker
   celery-worker:
@@ -39,8 +22,6 @@ services:
     volumes:
       - .:/app
     command: celery -A api worker --loglevel=info --concurrency=4 -E
-    networks:
-      - app-network
 
   # Celery beat scheduler
   celery-beat:
@@ -51,23 +32,15 @@ services:
     volumes:
       - .:/app
     command: celery -A api beat --loglevel=info
-    networks:
-      - app-network
 
   # Flower - Celery monitoring tool
   flower:
     build: .
     restart: unless-stopped
-    expose:
-      - "5555"
+    ports:
+      - "5555:5555"
     env_file:
       - .env
     volumes:
       - .:/app
     command: celery -A api flower --port=5555 --address=0.0.0.0 --basic_auth=admin:123456 --loglevel=info
-    networks:
-      - app-network
-
-networks:
-  app-network:
-    driver: bridge
