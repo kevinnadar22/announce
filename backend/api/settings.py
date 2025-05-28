@@ -228,7 +228,7 @@ CELERY_RESULT_BACKEND = config("CELERY_RESULT_BACKEND")
 CELERY_BEAT_SCHEDULE = {
     "scrape-every-hour": {
         "task": "core.tasks.initial_pib_scrape_task",
-        "schedule": 3600.0,  # every hour
+        "schedule": 900.0,  # every 15 minutes
     },
 }
 CELERY_BEAT_SCHEDULER = "redbeat.RedBeatScheduler"
