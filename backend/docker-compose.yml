@@ -6,12 +6,12 @@ services:
     build: .
     restart: unless-stopped
     ports:
-      - "8000:8000"
+      - "${PORT}:${PORT}"
     env_file:
       - .env
     volumes:
       - .:/app
-    command: gunicorn --bind 0.0.0.0:8000 --workers 3 --worker-class sync --timeout 30 --keep-alive 2 --max-requests 1000 --max-requests-jitter 100 --log-level info api.wsgi:application
+    command: gunicorn api.wsgi:application -c gunicorn.conf.py
 
   # Celery worker
   celery-worker:

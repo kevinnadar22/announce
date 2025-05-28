@@ -24,6 +24,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy project
 COPY . .
 
+# Create staticfiles directory
+RUN mkdir -p /app/staticfiles
+
+# Collect static files
+RUN python manage.py collectstatic --noinput
+
 # Create non-root user
 RUN groupadd -r django && useradd -r -g django django
 RUN chown -R django:django /app
@@ -33,4 +39,4 @@ USER django
 EXPOSE 8000
 
 # Default command (can be overridden in docker-compose)
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "--worker-class", "sync", "--timeout", "30", "--keep-alive", "2", "--max-requests", "1000", "--max-requests-jitter", "100", "api.wsgi:application"]
+CMD ["gunicorn", "api.wsgi:application", "-c", "gunicorn.conf.py"]
