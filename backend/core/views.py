@@ -461,7 +461,7 @@ class CategoryList(generics.ListAPIView):
 @cache_page(timeout=60 * 15)
 @api_view(["GET"])
 def total_count(request):
-    press_releases = PressRelease.objects.count()
+    press_releases = PressRelease.objects.filter(active=True).count()
     ministries = Ministry.objects.count()
     languages = len(LANGUAGE_CHOICES)
     return Response(
