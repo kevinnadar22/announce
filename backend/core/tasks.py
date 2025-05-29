@@ -47,7 +47,7 @@ def add(self, a, b):
 
 
 @shared_task(bind=True)
-def initial_pib_scrape_task(self):
+def initial_pib_scrape_task(self, limit=None, url=None):
     """
     Step 1: Scrapes metadata for new press releases and processes
     them one by one synchronously.
@@ -61,8 +61,14 @@ def initial_pib_scrape_task(self):
             exc=exc, countdown=self.request.retries * 60
         )  # Exponential backoff
 
+    if limit is not None:
+        releases_metadata.press_releases = releases_metadata.press_releases[:limit]
+
     processed_count = 0
     for release_meta in releases_metadata.press_releases:
+        if url is not None and str(release_meta.url) != url:
+            continue
+
         # Check if URL exists in DB before processing
         if PressRelease.objects.filter(source_url=str(release_meta.url)).exists():
             logger.info(
@@ -264,7 +270,7 @@ def process_single_press_release(
         # Execute all translation and saving tasks in parallel, then set active
         if translation_tasks:
             # Use chord to run all tasks in parallel and then execute the final task
-            chord(translation_tasks)(set_press_release_active.s(pr.id))
+            chord(translation_tasks)(set_press_release_active.si(pr.id))
         else:
             # If no translation tasks, just set active directly
             set_press_release_active.delay(pr.id)
@@ -291,7 +297,7 @@ def set_press_release_active(self, pr_id: int):
         raise
 
 
-@shared_task(bind=True)
+@shared_task(bind=True, max_retries=3)
 def translate_and_save_text(
     self,
     pr_id: int,
@@ -331,7 +337,7 @@ def translate_and_save_text(
         )
 
 
-@shared_task(bind=True)
+@shared_task(bind=True, max_retries=3)
 def process_and_save_translated_batch(
     self,
     pr_id: int,

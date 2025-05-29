@@ -36,4 +36,4 @@ USER django
 EXPOSE 5555
 
 # Flower command
-CMD ["celery", "-A", "api", "flower", "--port=5555", "--address=0.0.0.0", "--basic_auth=admin:123456", "--loglevel=info"] 
+CMD ["celery", "-A", "api", "flower", "--port=5555", "--address=0.0.0.0", "--basic_auth=admin:123456"] 

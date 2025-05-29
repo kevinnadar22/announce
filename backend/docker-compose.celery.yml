@@ -7,7 +7,7 @@ services:
       - .env
     volumes:
       - .:/app
-    command: celery -A api worker --loglevel=info --concurrency=4 -E
+    command: celery -A api worker --concurrency=4 -E
 
   # Celery beat scheduler
   celery-beat:
@@ -17,4 +17,4 @@ services:
       - .env
     volumes:
       - .:/app
-    command: celery -A api beat --loglevel=info 
+    command: celery -A api beat

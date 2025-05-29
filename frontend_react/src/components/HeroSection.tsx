@@ -15,7 +15,8 @@ const HeroSection = ({ onGetStarted }: HeroSectionProps) => {
     if (num >= 1000) {
       return `${(num / 1000).toFixed(1)}k+`;
     }
-    return `${num}+`;
+    // close to nearest 0 or 5 multiple
+    return `${Math.round(num / 5) * 5}+`;
   };
 
   return (
