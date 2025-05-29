@@ -1,7 +1,9 @@
 services:
   # Celery worker
   celery-worker:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.celery-worker
     restart: unless-stopped
     env_file:
       - .env
@@ -13,7 +15,9 @@ services:
 
   # Celery beat scheduler
   celery-beat:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.celery-beat
     restart: unless-stopped
     env_file:
       - .env
