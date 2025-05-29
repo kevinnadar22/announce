@@ -12,7 +12,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Globe, Languages, AlertCircle } from "lucide-react";
+import { Globe, Languages, AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import { usePressReleases } from "@/hooks/usePressReleases";
 import { useDebounce } from "@/hooks/useDebounce";
 import { PressReleaseListParams } from "@/lib/api";
@@ -275,10 +275,23 @@ const AnnouncementsSection = () => {
                 {/* Pagination */}
                 {totalPages > 1 && (
                   <div className="flex flex-col items-center space-y-4">
-                    <Pagination>
-                      <PaginationContent>
+                    <Pagination className="max-w-full overflow-x-auto px-2">
+                      <PaginationContent className="flex-wrap justify-center">
+                        {/* Mobile Previous/Next buttons */}
                         {currentPage > 1 && (
-                          <PaginationItem>
+                          <PaginationItem className="sm:hidden">
+                            <PaginationLink
+                              onClick={() => handlePageChange(currentPage - 1)}
+                              className={`cursor-pointer w-8 h-8 p-0 flex items-center justify-center ${isFetching ? 'opacity-50 pointer-events-none' : ''}`}
+                            >
+                              <ChevronLeft className="h-4 w-4" />
+                            </PaginationLink>
+                          </PaginationItem>
+                        )}
+
+                        {/* Desktop Previous button */}
+                        {currentPage > 1 && (
+                          <PaginationItem className="hidden sm:list-item">
                             <PaginationPrevious 
                               onClick={() => handlePageChange(currentPage - 1)}
                               className={`cursor-pointer ${isFetching ? 'opacity-50 pointer-events-none' : ''}`}
@@ -357,12 +370,25 @@ const AnnouncementsSection = () => {
                           </>
                         )}
                         
+                        {/* Desktop Next button */}
                         {currentPage < totalPages && (
-                          <PaginationItem>
+                          <PaginationItem className="hidden sm:list-item">
                             <PaginationNext 
                               onClick={() => handlePageChange(currentPage + 1)}
                               className={`cursor-pointer ${isFetching ? 'opacity-50 pointer-events-none' : ''}`}
                             />
+                          </PaginationItem>
+                        )}
+
+                        {/* Mobile Next button */}
+                        {currentPage < totalPages && (
+                          <PaginationItem className="sm:hidden">
+                            <PaginationLink
+                              onClick={() => handlePageChange(currentPage + 1)}
+                              className={`cursor-pointer w-8 h-8 p-0 flex items-center justify-center ${isFetching ? 'opacity-50 pointer-events-none' : ''}`}
+                            >
+                              <ChevronRight className="h-4 w-4" />
+                            </PaginationLink>
                           </PaginationItem>
                         )}
                       </PaginationContent>
@@ -377,7 +403,7 @@ const AnnouncementsSection = () => {
                         </span>
                       ) : (
                         <div className="flex items-center justify-center space-x-2">
-                          <span>Jump to page:</span>
+                          <span className="hidden sm:inline">Jump to page:</span>
                           <select
                             value={currentPage}
                             onChange={(e) => handlePageChange(parseInt(e.target.value))}
