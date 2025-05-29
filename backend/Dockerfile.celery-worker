@@ -29,7 +29,7 @@ RUN mkdir -p /app/logs
 
 # Create non-root user
 RUN groupadd -r celery && useradd -r -g celery celery
-RUN chown -R celery:celery /app /secrets
+RUN chown -R celery:celery /app
 USER celery
 
 # Default command for Celery worker
