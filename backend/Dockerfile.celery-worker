@@ -30,6 +30,7 @@ RUN mkdir -p /app/logs
 # Create secrets directory and copy secrets
 RUN mkdir -p /secrets
 RUN ls -la ${SECRETS_DIR}
+RUN echo "SECRETS_DIR: ${SECRETS_DIR}"
 COPY ${SECRETS_DIR} /secrets/
 
 # Create non-root user
