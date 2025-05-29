@@ -185,3 +185,4 @@ prod.env
 backend/data.json
 backend/test.py
 index.html
+secrets/

@@ -34,21 +34,6 @@ const AnnouncementCard = ({
 }: AnnouncementCardProps) => {
   const navigate = useNavigate();
   const titleRef = useRef<HTMLHeadingElement>(null);
-  const [isTitleTruncated, setIsTitleTruncated] = useState(false);
-
-  // Check if title is truncated
-  useEffect(() => {
-    const checkTruncation = () => {
-      if (titleRef.current) {
-        const element = titleRef.current;
-        setIsTitleTruncated(element.scrollHeight > element.clientHeight);
-      }
-    };
-
-    checkTruncation();
-    window.addEventListener('resize', checkTruncation);
-    return () => window.removeEventListener('resize', checkTruncation);
-  }, [title]);
 
   const formatDate = (dateString: string) => {
     return format(new Date(dateString), "MMM dd, yyyy");
@@ -102,23 +87,12 @@ const AnnouncementCard = ({
       
       {/* Title - Section 2 */}
       <div className="mb-6">
-        {isTitleTruncated ? (
-          <CompactTooltip content={title}>
-            <h3 
-              ref={titleRef}
-              className="text-xl font-bold text-gray-900 transition-colors duration-300 line-clamp-2 leading-tight cursor-pointer"
-            >
-              {title}
-            </h3>
-          </CompactTooltip>
-        ) : (
-          <h3 
-            ref={titleRef}
-            className="text-xl font-bold text-gray-900 transition-colors duration-300 line-clamp-2 leading-tight"
-          >
-            {title}
-          </h3>
-        )}
+        <h3 
+          ref={titleRef}
+          className="text-xl font-bold text-gray-900 transition-colors duration-300 leading-tight"
+        >
+          {title}
+        </h3>
       </div>
       
       {/* Content Preview and Details - Section 3 */}

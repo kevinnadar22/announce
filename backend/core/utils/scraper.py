@@ -2,7 +2,7 @@ import re
 import requests
 from bs4 import BeautifulSoup
 from .http_client import get_retry_session
-from ..constants import PIB_COOKIES, PIB_HEADERS, get_payload
+from .secrets import get_pib_secrets, get_payload
 from ..constants.response_models import (
     PressReleaseMetadata,
     PressReleaseMetadataList,
@@ -11,17 +11,26 @@ from ..constants.response_models import (
 from datetime import datetime
 from django.utils import timezone
 import pytz
+import logging
+
+logger = logging.getLogger(__name__)
 
 session = get_retry_session()
 
 
 def get_press_release_metadata():
     day, month, year = get_today_date()
+    try:
+        cookies, headers, payload = get_pib_secrets()
+    except ValueError as e:
+        logger.error(f"Error getting PIB secrets: {e}")
+        return PressReleaseMetadataList()
+
     response = session.post(
         "https://www.pib.gov.in/Allrel.aspx",
         data=get_payload(day, month, year),
-        headers=PIB_HEADERS,
-        cookies=PIB_COOKIES,
+        headers=headers,
+        cookies=cookies,
     )
 
     press_releases_metadata = []

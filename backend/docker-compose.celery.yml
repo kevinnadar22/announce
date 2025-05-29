@@ -7,6 +7,8 @@ services:
       - .env
     volumes:
       - .:/app
+      - ${SECRETS_DIR}:/secrets:ro
+
     command: celery -A api worker --concurrency=4 -E
 
   # Celery beat scheduler
@@ -17,4 +19,4 @@ services:
       - .env
     volumes:
       - .:/app
-    command: celery -A api beat
+    command: celery -A api beat 
