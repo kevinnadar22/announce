@@ -107,6 +107,7 @@ def generate_gemini(system_prompt, user_prompt):
 
         except Exception as e:
             error_message = str(e).lower()
+            logger.error(f"Gemini API error: {e}")
 
             # Check if it's a rate limit error
             if any(
@@ -121,8 +122,6 @@ def generate_gemini(system_prompt, user_prompt):
                 time.sleep(wait_time)
                 continue  # Keep trying indefinitely
             else:
-                # For non-rate-limit errors, raise immediately
-                logger.error(f"Gemini API error: {e}")
                 raise
 
 
