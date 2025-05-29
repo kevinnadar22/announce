@@ -27,11 +27,6 @@ COPY . .
 # Create logs directory with proper permissions
 RUN mkdir -p /app/logs
 
-# Create secrets directory and copy secrets
-RUN mkdir -p /secrets
-COPY /root/secrets/ /secrets/ 
-# hardcoded secrets for now
-
 # Create non-root user
 RUN groupadd -r celery && useradd -r -g celery celery
 RUN chown -R celery:celery /app /secrets
