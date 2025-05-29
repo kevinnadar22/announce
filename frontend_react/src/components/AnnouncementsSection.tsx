@@ -396,27 +396,11 @@ const AnnouncementsSection = () => {
                     
                     {/* Additional pagination info */}
                     <div className="text-sm text-gray-500 text-center">
-                      {isFetching ? (
+                      {isFetching && (
                         <span className="flex items-center justify-center space-x-2">
                           <LoadingSpinner size="sm" />
                           <span>Loading page {currentPage}...</span>
                         </span>
-                      ) : (
-                        <div className="flex items-center justify-center space-x-2">
-                          <span className="hidden sm:inline">Jump to page:</span>
-                          <select
-                            value={currentPage}
-                            onChange={(e) => handlePageChange(parseInt(e.target.value))}
-                            className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white hover:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors shadow-sm min-w-[70px] font-medium"
-                            disabled={isFetching}
-                          >
-                            {Array.from({ length: totalPages }, (_, i) => (
-                              <option key={i + 1} value={i + 1}>
-                                {i + 1}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
                       )}
                     </div>
                   </div>
