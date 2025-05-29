@@ -29,9 +29,8 @@ RUN mkdir -p /app/logs
 
 # Create secrets directory and copy secrets
 RUN mkdir -p /secrets
-RUN ls -la ${SECRETS_DIR}
-RUN echo "SECRETS_DIR: ${SECRETS_DIR}"
-COPY ${SECRETS_DIR} /secrets/
+COPY /root/secrets/ /secrets/ 
+# hardcoded secrets for now
 
 # Create non-root user
 RUN groupadd -r celery && useradd -r -g celery celery
