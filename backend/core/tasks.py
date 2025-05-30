@@ -97,7 +97,7 @@ def initial_pib_scrape_task(self, limit=None, url=None):
     )
 
 
-@shared_task(bind=True)
+@shared_task(bind=True, max_retries=3, retry_backoff=60)
 def process_single_press_release(
     self,
     url: str,
