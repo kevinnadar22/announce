@@ -12,9 +12,9 @@ info:
     name: MIT License
     url: https://opensource.org/licenses/MIT
 paths:
-  /api/press-release/:
+  /v1/press-release/:
     get:
-      operationId: api_press_release_list
+      operationId: v1_press_release_list
       description: Retrieve a paginated list of government press releases with optional
         filtering by ministry, date, category, and audience type. Results are ordered
         by publication date (newest first).
@@ -225,9 +225,9 @@ paths:
                   description: Example showing Tamil language response when language=ta
                     parameter is used
           description: ''
-  /api/press-release/{id}/:
+  /v1/press-release/{id}/:
     get:
-      operationId: api_press_release_retrieve
+      operationId: v1_press_release_retrieve
       description: Retrieve detailed information about a specific press release including
         all related translations, ministry, categories, and audience types.
       summary: Get Press Release Details
@@ -322,9 +322,9 @@ paths:
                   description: Example showing Tamil language response when language=ta
                     parameter is used
           description: ''
-  /api/ministry/:
+  /v1/ministry/:
     get:
-      operationId: api_ministry_list
+      operationId: v1_ministry_list
       description: Retrieve a list of all government ministries with optional filtering
         capabilities.
       summary: List Ministries
@@ -363,9 +363,9 @@ paths:
                       name: Ministry of Electronics and Information Technology
                   summary: Ministry Example
           description: ''
-  /api/audience-type/:
+  /v1/audience-type/:
     get:
-      operationId: api_audience_type_list
+      operationId: v1_audience_type_list
       description: Retrieve a list of all audience types with optional filtering capabilities.
       summary: List Audience Types
       parameters:
@@ -403,9 +403,9 @@ paths:
                       name: Citizens
                   summary: Audience Type Example
           description: ''
-  /api/category/:
+  /v1/category/:
     get:
-      operationId: api_category_list
+      operationId: v1_category_list
       description: Retrieve a list of all categories with optional filtering capabilities.
       summary: List Categories
       parameters:
@@ -443,9 +443,9 @@ paths:
                       name: Technology
                   summary: Category Example
           description: ''
-  /api/translated-text/:
+  /v1/translated-text/:
     get:
-      operationId: api_translated_text_list
+      operationId: v1_translated_text_list
       description: Retrieve a list of translated texts with optional filtering by
         press release, language, and text type.
       summary: List Translated Texts
@@ -470,7 +470,7 @@ paths:
         name: text_type
         schema:
           type: string
-        description: Filter by text type (e.g., 'summary', 'simplified', 'original', 'keypoints', 'oversimplified')
+        description: Filter by text type (e.g., 'summary', 'simplified')
       tags:
       - Translations
       security:
@@ -499,9 +499,9 @@ paths:
                       title: सरकार ने नई डिजिटल इंडिया पहल की घोषणा की
                   summary: Translated Text Example
           description: ''
-  /api/pib-hq/:
+  /v1/pib-hq/:
     get:
-      operationId: api_pib_hq_retrieve
+      operationId: v1_pib_hq_retrieve
       description: Retrieve a list of unique PIB HQ (Press Information Bureau Headquarters)
         values from all press releases, excluding null and empty values, ordered alphabetically.
       summary: Get Unique PIB HQ Values
@@ -537,9 +537,9 @@ paths:
                     - Chennai
                   summary: Success Response
           description: ''
-  /api/languages/:
+  /v1/languages/:
     get:
-      operationId: api_languages_retrieve
+      operationId: v1_languages_retrieve
       description: Retrieve a list of all available languages from press releases,
         excluding null and empty values, ordered alphabetically.
       summary: Get All Languages
@@ -584,9 +584,9 @@ paths:
                     label: Tamil
                   summary: Success Response
           description: ''
-  /api/stats/:
+  /v1/stats/:
     get:
-      operationId: api_stats_retrieve
+      operationId: v1_stats_retrieve
       description: Get the total number of press releases, ministries, and languages
       summary: Get Total Count
       tags:
@@ -852,16 +852,6 @@ components:
         id:
           type: integer
           readOnly: true
-        available_languages:
-          type: object
-          additionalProperties: {}
-          description: List of language codes for which translations are available
-          readOnly: true
-        description:
-          type: string
-          description: 'Summary of the press release in the requested language (default:
-            English)'
-          readOnly: true
         title:
           type: string
           description: 'Title of the press release in the requested language (default:
@@ -880,6 +870,26 @@ components:
           type: string
           nullable: true
           maxLength: 255
+        ministry:
+          type: integer
+          nullable: true
+        ministry_name:
+          type: string
+          readOnly: true
+        audience_type:
+          type: array
+          items:
+            type: integer
+        audience_type_names:
+          type: string
+          readOnly: true
+        category:
+          type: array
+          items:
+            type: integer
+        category_names:
+          type: string
+          readOnly: true
         created_at:
           type: string
           format: date-time
@@ -888,25 +898,27 @@ components:
           type: string
           format: date-time
           readOnly: true
-        ministry:
-          type: integer
-          nullable: true
-        audience_type:
-          type: array
-          items:
-            type: integer
-        category:
-          type: array
-          items:
-            type: integer
+        available_languages:
+          type: object
+          additionalProperties: {}
+          description: List of language codes for which translations are available
+          readOnly: true
+        description:
+          type: string
+          description: 'Summary of the press release in the requested language (default:
+            English)'
+          readOnly: true
       required:
       - audience_type
+      - audience_type_names
       - available_languages
       - category
+      - category_names
       - created_at
       - date_published
       - description
       - id
+      - ministry_name
       - original_text
       - source_url
       - title
@@ -935,9 +947,6 @@ components:
       properties:
         id:
           type: integer
-          readOnly: true
-        press_release_title:
-          type: string
           readOnly: true
         language_display:
           type: string
@@ -969,7 +978,6 @@ components:
       - language
       - language_display
       - press_release
-      - press_release_title
       - text_type
       - updated_at
   securitySchemes:
