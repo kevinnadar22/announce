@@ -1,6 +1,14 @@
-from pydantic import BaseModel, HttpUrl
+import re
+from pydantic import BaseModel, HttpUrl, field_validator
 from typing import List, Optional
 from datetime import datetime
+
+
+def remove_image_tags(text: str) -> str:
+    """
+    Remove image tags from text.
+    """
+    return re.sub(r"<img[^>]*>", "", text)
 
 
 class SimplifiedSummaryPoint(BaseModel):
@@ -8,6 +16,10 @@ class SimplifiedSummaryPoint(BaseModel):
 
     title: str
     description_html: str
+
+    @field_validator("title", mode="before")
+    def apply_clean_title(cls, v):
+        return remove_image_tags(v)
 
 
 class SimplifiedResponse(BaseModel):
@@ -21,6 +33,10 @@ class OversimplifiedStoryPoint(BaseModel):
 
     title: str
     story_html: str
+
+    @field_validator("title", mode="before")
+    def apply_clean_title(cls, v):
+        return remove_image_tags(v)
 
 
 class OversimplifiedResponse(BaseModel):
