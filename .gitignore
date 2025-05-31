@@ -186,4 +186,3 @@ backend/data.json
 backend/test.py
 index.html
 secrets/
-backend/core/utils/json_parser.py
