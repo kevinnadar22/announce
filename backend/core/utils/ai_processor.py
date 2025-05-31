@@ -3,6 +3,7 @@
 
 
 import json
+import re
 import time
 import threading
 import logging
@@ -202,5 +203,7 @@ def translate_text_gemini(text, target_language):
     # )
     # json_response = json_load(translated_text)
     # return TranslatedText(**json_response).translated_text
+    # remove image tags from text because google translate doesn't support them
+    text = re.sub(r"<img[^>]*>", "", text)
     translated_text = translate_text(text, target_language=target_language)
     return translated_text
