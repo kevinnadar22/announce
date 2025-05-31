@@ -1,9 +1,10 @@
-from typing import Optional, Any
+from typing import Optional, Any, Callable
 import tenacity
 import httpcore
-setattr(httpcore, 'SyncHTTPTransport', Any)
-from googletrans import Translator
 
+setattr(httpcore, "SyncHTTPTransport", Any)
+from googletrans import Translator
+import asyncio
 
 @tenacity.retry(
     stop=tenacity.stop_after_attempt(3),
@@ -25,5 +26,6 @@ def translate_text(text: str, target_language: str) -> Optional[str]:
         Translated text if successful, None if translation fails after retries
     """
     translator = Translator()
-    result = translator.translate(text, dest=target_language)
+    # Run the async translation synchronously
+    result = asyncio.run(translator.translate(text, dest=target_language))
     return result.text
