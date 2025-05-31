@@ -13,7 +13,7 @@ Requests==2.32.3
 tenacity==8.2.3
 urllib3==2.4.0
 groq==0.26.0
-googletrans==3.1.0a0
+googletrans==4.0.2
 # Additional dependencies for production
 gunicorn==22.0.0
 celery==5.3.6
