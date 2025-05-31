@@ -1,5 +1,5 @@
 # To run this code you need to install the following dependencies:
-# pip install google-genai
+# pip install google-genai groq
 
 
 import json
@@ -8,6 +8,7 @@ import threading
 import logging
 from google import genai
 from google.genai import types
+from groq import Groq
 from django.conf import settings
 from ..constants.prompt import (
     SIMPLIFIED_PROMPT,
@@ -23,6 +24,8 @@ from ..constants.response_models import (
     KeyPointsResponse,
     TranslatedText,
 )
+from .json_parser import json_load
+from .translate_client import translate_text
 
 logger = logging.getLogger(__name__)
 
@@ -125,8 +128,36 @@ def generate_gemini(system_prompt, user_prompt):
                 raise
 
 
+def generate_groq(system_prompt, user_prompt):
+    """Generate content with Groq API"""
+
+    try:
+        client = Groq(api_key=settings.GROQ_API_KEY)
+
+        completion = client.chat.completions.create(
+            model="meta-llama/llama-4-scout-17b-16e-instruct",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            temperature=0.1,  # Lower temperature for more consistent JSON output
+            max_completion_tokens=8000,
+            top_p=1,
+            stream=False,  # Disable streaming for JSON response parsing
+            stop=None,
+        )
+
+        return completion.choices[0].message.content
+
+    except Exception as e:
+        logger.error(f"Groq API error: {e}")
+        raise
+
+
 def get_llm_client():
-    if settings.GEMINI_API_KEY:
+    if settings.GROQ_API_KEY:
+        return generate_groq
+    elif settings.GEMINI_API_KEY:
         return generate_gemini
     else:
         return None
@@ -136,7 +167,7 @@ def generate_simplified_text(original_text):
     simplified_output = get_llm_client()(
         system_prompt=SIMPLIFIED_PROMPT, user_prompt=original_text
     )
-    json_response = json.loads(simplified_output)
+    json_response = json_load(simplified_output)
     return SimplifiedResponse(**json_response)
 
 
@@ -144,7 +175,7 @@ def generate_oversimplified_text(original_text):
     oversimplified_output = get_llm_client()(
         system_prompt=OVERSIMPLIFIED_PROMPT, user_prompt=original_text
     )
-    json_response = json.loads(oversimplified_output)
+    json_response = json_load(oversimplified_output)
     return OversimplifiedResponse(**json_response)
 
 
@@ -152,7 +183,7 @@ def generate_summary(original_text):
     summary_output = get_llm_client()(
         system_prompt=SUMMARY_PROMPT, user_prompt=original_text
     )
-    json_response = json.loads(summary_output)
+    json_response = json_load(summary_output)
     return SummaryResponse(**json_response)
 
 
@@ -160,14 +191,16 @@ def generate_keypoints(original_text):
     keypoints_output = get_llm_client()(
         system_prompt=KEYPOINTS_PROMPT, user_prompt=original_text
     )
-    json_response = json.loads(keypoints_output)
+    json_response = json_load(keypoints_output)
     return KeyPointsResponse(**json_response)
 
 
 def translate_text_gemini(text, target_language):
     user_prompt = f"Translate the following text to {target_language}: {text}"
-    translated_text = get_llm_client()(
-        system_prompt=TRANSLATE_PROMPT, user_prompt=user_prompt
-    )
-    json_response = json.loads(translated_text)
-    return TranslatedText(**json_response).translated_text
+    # translated_text = get_llm_client()(
+    #     system_prompt=TRANSLATE_PROMPT, user_prompt=user_prompt
+    # )
+    # json_response = json_load(translated_text)
+    # return TranslatedText(**json_response).translated_text
+    translated_text = translate_text(text, target_language=target_language)
+    return translated_text
