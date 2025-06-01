@@ -19,7 +19,7 @@ import { PressReleaseListParams } from "@/lib/api";
 
 const AnnouncementsSection = () => {
   // Constants
-  const DEFAULT_PAGE_SIZE = 6; // Default page size for API requests
+  const DEFAULT_PAGE_SIZE = 9; // Default page size for API requests
   
   // Filter state
   const [searchTerm, setSearchTerm] = useState("");

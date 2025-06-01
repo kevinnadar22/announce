@@ -79,7 +79,7 @@ const AnnouncementCard = ({
           <div className="flex items-center space-x-1 bg-emerald-50 border border-emerald-200 rounded-full px-3 py-1.5">
             <Globe className="h-3 w-3 text-emerald-600" />
             <span className="text-xs text-emerald-700 font-medium">
-              {decodedLanguages.length} Languages
+              {audienceTypes[0]}
             </span>
           </div>
         </div>
@@ -116,27 +116,15 @@ const AnnouncementCard = ({
                 {category}
               </Badge>
             ))}
-            {categories.length > 3 && (
-              <CompactTooltip content={categories.slice(3)}>
-                <span 
-                  className="inline-flex items-center px-3 py-2 rounded-full text-xs font-medium bg-gray-100 text-gray-700 border border-gray-300 cursor-pointer hover:bg-emerald-100 hover:text-emerald-700 hover:border-emerald-300 transition-all duration-300 relative z-30 min-w-[60px] justify-center"
-                  role="button"
-                  tabIndex={0}
-                  aria-label={`Show all ${categories.length} categories`}
-                >
-                  +{categories.length - 3} more
-                </span>
-              </CompactTooltip>
-            )}
           </div>
         </div>
 
         {/* Ministry and Location */}
         <div className="space-y-3">
-          <div className="flex items-center text-sm text-gray-600">
+          {/* <div className="flex items-center text-sm text-gray-600">
             <Building2 className="h-4 w-4 mr-3 text-emerald-600" />
             <span className="font-medium">{ministry}</span>
-          </div>
+          </div> */}
           {pibHq && (
             <div className="flex items-center text-sm text-gray-600">
               <MapPin className="h-4 w-4 mr-3 text-emerald-600" />
@@ -145,7 +133,7 @@ const AnnouncementCard = ({
           )}
         </div>
 
-        {/* Audience Types */}
+        {/* Audience Types
         <div className="flex items-center">
           <Users className="h-4 w-4 mr-3 text-emerald-600 flex-shrink-0" />
           <div className="flex flex-wrap gap-2">
@@ -171,7 +159,7 @@ const AnnouncementCard = ({
               </CompactTooltip>
             )}
           </div>
-        </div>
+        </div> */}
 
         {/* Date and Time */}
         <div className="flex items-center justify-between text-sm text-gray-500">
@@ -185,7 +173,7 @@ const AnnouncementCard = ({
         </div>
 
         {/* Available Languages */}
-        <div>
+        {/* <div>
           <div className="text-xs text-gray-500 mb-3 font-medium">Available in:</div>
           <div className="flex flex-wrap gap-2">
             {decodedLanguages.slice(0, 4).map((language, index) => (
@@ -210,11 +198,11 @@ const AnnouncementCard = ({
               </CompactTooltip>
             )}
           </div>
-        </div>
+        </div> */}
       </div>
       
       {/* Action Buttons - Section 4 - Always at bottom */}
-      <div className="pt-6 border-t border-gray-100 relative z-10 mt-6">
+      {/* <div className="pt-6 border-t border-gray-100 relative z-10 mt-6">
         <div className="flex items-center justify-between">
           <Button 
             variant="ghost" 
@@ -234,7 +222,7 @@ const AnnouncementCard = ({
             <ExternalLink className="h-4 w-4" />
           </Button>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

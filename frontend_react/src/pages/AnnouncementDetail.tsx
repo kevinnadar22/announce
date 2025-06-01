@@ -332,14 +332,14 @@ const AnnouncementDetail = () => {
                   <div className="flex items-center space-x-3">
                     <Calendar className="h-5 w-5 text-emerald-600" />
                     <div>
-                      <p className="text-sm text-gray-500 font-medium">Published</p>
+                    
                       <p className="text-gray-900 font-semibold">{formatDate(pressRelease.date_published)}</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
                     <MapPin className="h-5 w-5 text-emerald-600" />
                     <div>
-                      <p className="text-sm text-gray-500 font-medium">Location</p>
+            
                       <p className="text-gray-900 font-semibold">{pressRelease.pib_hq}</p>
                     </div>
                   </div>
@@ -350,28 +350,28 @@ const AnnouncementDetail = () => {
                   <div>
                     <h3 className="text-base font-semibold text-gray-700 mb-3 flex items-center">
                       <Tag className="h-4 w-4 mr-2 text-emerald-600" />
-                      Categories
-                    </h3>
-                    <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-2">
                       {pressRelease.category_names.map((category, index) => (
                         <span key={index} className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium">
                           {category}
                         </span>
                       ))}
                     </div>
+                    </h3>
+        
                   </div>
                   <div>
                     <h3 className="text-base font-semibold text-gray-700 mb-3 flex items-center">
                       <Users className="h-4 w-4 mr-2 text-emerald-600" />
-                      Target Audience
-                    </h3>
-                    <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-2">
                       {pressRelease.audience_type_names.map((audience, index) => (
                         <span key={index} className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
                           {audience}
                         </span>
                       ))}
                     </div>
+                    </h3>
+      
                   </div>
                 </div>
 
@@ -397,12 +397,7 @@ const AnnouncementDetail = () => {
 
                 {/* Action Buttons */}
                 <div className="flex flex-wrap gap-4 items-center">
-                  <Button variant="outline" asChild className="border-emerald-200 text-emerald-700 hover:bg-emerald-50">
-                    <a href={pressRelease.source_url} target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="h-4 w-4 mr-2" />
-                      View Original Source
-                    </a>
-                  </Button>
+    
                   
                   {/* New Share UI */}
                   <div className="flex items-center gap-3">

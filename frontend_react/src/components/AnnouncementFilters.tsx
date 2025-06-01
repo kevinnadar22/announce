@@ -92,7 +92,7 @@ const AnnouncementFilters = ({
           allOptionLabel="All Categories"
         />
 
-        <SearchableFilterSelect
+        {/* <SearchableFilterSelect
           value={selectedMinistry}
           onValueChange={onMinistryChange}
           placeholder={ministriesLoading ? "Loading ministries..." : ministriesError ? "Failed to load ministries" : "Ministry"}
@@ -102,7 +102,7 @@ const AnnouncementFilters = ({
           maxLabelLength={20}
           searchPlaceholder="Search ministries..."
           allOptionLabel="All Ministries"
-        />
+        /> */}
 
         <SearchableFilterSelect
           value={selectedAudience}
