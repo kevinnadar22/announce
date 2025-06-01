@@ -98,9 +98,15 @@ def get_press_release_content(url):
                 hour = 0
 
             # Create a naive datetime first
+            try:
+                month_num = datetime.strptime(month, "%B").month
+            except ValueError:
+                # Handle 3-letter month abbreviations
+                month_num = datetime.strptime(month.title(), "%b").month
+
             naive_dt = datetime(
                 int(year),
-                datetime.strptime(month, "%B").month,
+                month_num,
                 int(day),
                 hour,
                 int(minute),
