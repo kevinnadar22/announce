@@ -255,9 +255,6 @@ const AnnouncementsSection = () => {
                   )}
                 </span>
               </div>
-              <div className="text-sm text-gray-500">
-                Last updated: {new Date().toLocaleDateString()}
-              </div>
             </div>
 
             {/* Announcements Grid or Empty State */}

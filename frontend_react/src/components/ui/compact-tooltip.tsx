@@ -78,7 +78,12 @@ const CompactTooltip = ({ content, children }: CompactTooltipProps) => {
       <div className="bg-gray-900 text-white text-xs rounded px-2 py-1 shadow-lg max-w-[200px]">
         {isArrayContent ? (
           <div>
-            {(content as string[]).join(', ')}
+            {(content as string[]).map((item, index) => (
+              <>
+                {index > 0 && <br />}
+                {item}
+              </>
+            ))}
           </div>
         ) : (
           <div>{content as string}</div>

@@ -1,7 +1,6 @@
 import { useRef } from "react";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
-import RecentAnnouncements from "@/components/RecentAnnouncements";
 import AnnouncementsSection from "@/components/AnnouncementsSection";
 import AboutSection from "@/components/AboutSection";
 import FAQ from "@/components/FAQ";
@@ -22,7 +21,7 @@ const Index = () => {
     <div className="min-h-screen bg-white">
       <Header />
       <HeroSection onGetStarted={scrollToAnnouncements} />
-      <RecentAnnouncements />
+
       <div ref={announcementsRef}>
         <AnnouncementsSection />
       </div>

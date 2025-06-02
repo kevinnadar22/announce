@@ -13,21 +13,6 @@ const AboutSection = () => {
       description: "Complex government policies and announcements translated into easy-to-understand language for all citizens"
     },
     {
-      icon: <Search className="h-6 w-6" />,
-      title: "Smart Search & Filters",
-      description: "Powerful search functionality with advanced filters by ministry, location, audience, and announcement type"
-    },
-    {
-      icon: <Bell className="h-6 w-6" />,
-      title: "Real-time Notifications",
-      description: "Get instant notifications about the latest government announcements and policy updates as they're published"
-    },
-    {
-      icon: <Smartphone className="h-6 w-6" />,
-      title: "Mobile-First Design",
-      description: "Responsive design optimized for mobile devices, ensuring seamless access on smartphones and tablets"
-    },
-    {
       icon: <Globe className="h-6 w-6" />,
       title: "Nationwide Coverage",
       description: "Comprehensive coverage of announcements from central and state governments across all ministries and departments"

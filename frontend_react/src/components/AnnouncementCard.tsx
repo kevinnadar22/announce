@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import CompactTooltip from "@/components/ui/compact-tooltip";
-import { ExternalLink, Calendar, Building2, Users, Globe, MapPin, Clock } from "lucide-react";
+import { ExternalLink, Calendar, Building2, Users, Globe, MapPin, Clock, Languages } from "lucide-react";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { decodeLanguages } from "@/lib/languageMapping";
@@ -70,159 +70,101 @@ const AnnouncementCard = ({
 
   return (
     <div 
-      className="bg-white rounded-3xl border border-gray-200 p-6 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 group cursor-pointer relative overflow-hidden flex flex-col h-full"
+      className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm hover:shadow-md transition-all duration-200 group cursor-pointer flex flex-col h-full"
       onClick={handleCardClick}
     >
-      {/* Header with Language Count - Section 1 */}
-      <div className="flex items-start justify-between mb-6 relative z-10">
-        <div className="flex items-center space-x-2">
-          <div className="flex items-center space-x-1 bg-emerald-50 border border-emerald-200 rounded-full px-3 py-1.5">
-            <Globe className="h-3 w-3 text-emerald-600" />
-            <span className="text-xs text-emerald-700 font-medium">
-              {audienceTypes[0]}
-            </span>
-          </div>
+      {/* Header: Date + External Link */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center text-sm text-gray-500">
+          <Calendar className="h-3.5 w-3.5 mr-1.5" />
+          <span>{formatDate(datePublished)}</span>
+          <span className="mx-2">•</span>
+          <Clock className="h-3.5 w-3.5 mr-1" />
+          <span>{formatTime(datePublished)}</span>
         </div>
-      </div>
-      
-      {/* Title - Section 2 */}
-      <div className="mb-6">
-        <h3 
-          ref={titleRef}
-          className="text-xl font-bold text-gray-900 transition-colors duration-300 leading-tight"
+        <Button 
+          variant="ghost" 
+          size="sm"
+          className="text-gray-400 hover:text-gray-600 p-1 h-auto"
+          onClick={handleExternalLinkClick}
         >
-          {title}
-        </h3>
+          <ExternalLink className="h-4 w-4" />
+        </Button>
       </div>
       
-      {/* Content Preview and Details - Section 3 */}
-      <div className="flex-grow space-y-6">
-        {/* Content Preview */}
-        <div>
-          <p className="text-gray-600 line-clamp-4 leading-relaxed text-sm">
-            {originalText}
-          </p>
-        </div>
+      {/* Title */}
+      <h3 
+        ref={titleRef}
+        className="text-lg font-semibold text-gray-900 leading-tight mb-3 line-clamp-2"
+      >
+        {title}
+      </h3>
+      
+      {/* Content Preview */}
+      <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-4 flex-grow">
+        {originalText}
+      </p>
 
-        {/* Categories */}
-        <div>
-          <div className="flex flex-wrap gap-2">
-            {categories.slice(0, 3).map((category, index) => (
-              <Badge 
-                key={index}
-                variant="secondary" 
-                className="text-xs bg-gray-100 text-gray-700 hover:bg-emerald-100 hover:text-emerald-700 transition-colors duration-300 px-3 py-1"
-              >
-                {category}
-              </Badge>
-            ))}
+      {/* Metadata Grid - Compact layout */}
+      <div className="space-y-3">
+        {/* Row 1: Ministry + Location */}
+        <div className="flex items-center justify-between text-xs">
+          <div className="flex items-center text-gray-600">
+            <Building2 className="h-3.5 w-3.5 mr-1.5" />
+            <span className="truncate max-w-[120px]" title={ministry}>{ministry}</span>
           </div>
-        </div>
-
-        {/* Ministry and Location */}
-        <div className="space-y-3">
-          {/* <div className="flex items-center text-sm text-gray-600">
-            <Building2 className="h-4 w-4 mr-3 text-emerald-600" />
-            <span className="font-medium">{ministry}</span>
-          </div> */}
           {pibHq && (
-            <div className="flex items-center text-sm text-gray-600">
-              <MapPin className="h-4 w-4 mr-3 text-emerald-600" />
+            <div className="flex items-center text-gray-600">
+              <MapPin className="h-3.5 w-3.5 mr-1" />
               <span>{getLocationDisplay(pibHq)}</span>
             </div>
           )}
         </div>
 
-        {/* Audience Types
-        <div className="flex items-center">
-          <Users className="h-4 w-4 mr-3 text-emerald-600 flex-shrink-0" />
-          <div className="flex flex-wrap gap-2">
-            {audienceTypes.slice(0, 2).map((audience, index) => (
-              <Badge 
-                key={index}
-                variant="outline" 
-                className="text-xs bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100 transition-colors duration-300"
-              >
-                {audience}
-              </Badge>
-            ))}
-            {audienceTypes.length > 2 && (
-              <CompactTooltip content={audienceTypes.slice(2)}>
-                <span 
-                  className="inline-flex items-center px-3 py-2 rounded-full text-xs font-medium bg-emerald-50 border border-emerald-200 text-emerald-700 cursor-pointer hover:bg-emerald-100 hover:border-emerald-300 transition-all duration-300 relative z-30 min-w-[60px] justify-center"
-                  role="button"
-                  tabIndex={0}
-                  aria-label={`Show all ${audienceTypes.length} audience types`}
-                >
-                  +{audienceTypes.length - 2} more
-                </span>
-              </CompactTooltip>
-            )}
-          </div>
-        </div> */}
-
-        {/* Date and Time */}
-        <div className="flex items-center justify-between text-sm text-gray-500">
-          <div className="flex items-center">
-            <Calendar className="h-4 w-4 mr-2 text-emerald-600" />
-            <span className="font-medium">{formatDate(datePublished)}</span>
-            <span className="mx-2">•</span>
-            <Clock className="h-4 w-4 mr-1 text-emerald-600" />
-            <span>{formatTime(datePublished)}</span>
-          </div>
-        </div>
-
-        {/* Available Languages */}
-        {/* <div>
-          <div className="text-xs text-gray-500 mb-3 font-medium">Available in:</div>
-          <div className="flex flex-wrap gap-2">
-            {decodedLanguages.slice(0, 4).map((language, index) => (
-              <Badge 
-                key={index}
-                variant="outline" 
-                className="text-xs bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100 transition-colors duration-300"
-              >
-                {language}
-              </Badge>
-            ))}
-            {decodedLanguages.length > 4 && (
-              <CompactTooltip content={decodedLanguages.slice(4)}>
-                <span 
-                  className="inline-flex items-center px-3 py-2 rounded-full text-xs font-medium bg-emerald-50 border border-emerald-200 text-emerald-700 cursor-pointer hover:bg-emerald-100 hover:border-emerald-300 transition-all duration-300 relative z-30 min-w-[60px] justify-center"
-                  role="button"
-                  tabIndex={0}
-                  aria-label={`Show all ${decodedLanguages.length} available languages`}
-                >
-                  +{decodedLanguages.length - 4} more
-                </span>
-              </CompactTooltip>
-            )}
-          </div>
-        </div> */}
-      </div>
-      
-      {/* Action Buttons - Section 4 - Always at bottom */}
-      {/* <div className="pt-6 border-t border-gray-100 relative z-10 mt-6">
+        {/* Row 2: Categories (max 2) + Language count */}
         <div className="flex items-center justify-between">
-          <Button 
-            variant="ghost" 
-            size="sm"
-            className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 font-semibold text-sm transition-all duration-300 group/btn"
-            onClick={handleReadFullClick}
-          >
-            <span>Read Full Announcement</span>
-            <ExternalLink className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
-          </Button>
-          <Button 
-            variant="ghost" 
-            size="sm"
-            className="text-gray-500 hover:text-gray-700 hover:bg-gray-50 p-2 rounded-full transition-all duration-300"
-            onClick={handleExternalLinkClick}
-          >
-            <ExternalLink className="h-4 w-4" />
-          </Button>
+          <div className="flex gap-1.5">
+            {categories.slice(0, 2).map((category, index) => (
+              <Badge 
+                key={index}
+                variant="secondary" 
+                className="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 hover:bg-emerald-100 hover:text-emerald-700 transition-colors"
+              >
+                {category}
+              </Badge>
+            ))}
+            {categories.length > 2 && (
+              <CompactTooltip content={categories.slice(2)}>
+                <Badge 
+                  variant="secondary" 
+                  className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 cursor-pointer hover:bg-gray-200"
+                >
+                  +{categories.length - 2}
+                </Badge>
+              </CompactTooltip>
+            )}
+          </div>
+          
+          <div className="flex items-center gap-3">
+            {/* Audience type indicator */}
+            <CompactTooltip content={audienceTypes}>
+              <div className="flex items-center text-xs text-gray-500">
+                <Users className="h-3.5 w-3.5 mr-1" />
+                <span>{audienceTypes[0]}</span>
+                {audienceTypes.length > 1 && <span className="ml-1">+{audienceTypes.length - 1}</span>}
+              </div>
+            </CompactTooltip>
+            
+            {/* Language count */}
+
+              <div className="flex items-center text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
+                <Languages className="h-3.5 w-3.5 mr-1" />
+                <span className="font-medium">{decodedLanguages.length}</span>
+              </div>
+
+          </div>
         </div>
-      </div> */}
+      </div>
     </div>
   );
 };

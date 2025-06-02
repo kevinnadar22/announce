@@ -14,20 +14,12 @@ const FAQ = () => {
       answer: "Announce is an independent platform for accessing government announcements, policies, and schemes. Making government communication accessible to all citizens with AI-powered simplification and multilingual support."
     },
     {
-      question: "How often are announcements updated?",
-      answer: "Government announcements are updated in real-time as soon as they are published by the respective ministries and departments. Our platform ensures you get the latest information within minutes of official publication."
-    },
-    {
       question: "Is Announce affiliated with the Government of India?",
       answer: "Announce is an independent platform and is not affiliated with the Government of India. We aggregate publicly available information for educational and informational purposes only."
     },
     {
       question: "In which languages are announcements available?",
       answer: "Announcements are available in 10+ regional languages including English, Hindi, Tamil, Telugu, Bengali, Marathi, Gujarati, Kannada, Malayalam, and Punjabi. The availability depends on the original announcement from the government source."
-    },
-    {
-      question: "How can I filter announcements by specific criteria?",
-      answer: "You can filter announcements by category, ministry, target audience, language, location, and date range. Use the comprehensive filter options in the announcements section to find exactly what you're looking for."
     },
     {
       question: "Are all government announcements available on this platform?",
@@ -37,10 +29,6 @@ const FAQ = () => {
       question: "How do I verify the authenticity of announcements?",
       answer: "All announcements include direct links to the original government sources. We recommend verifying important information by clicking on the source link to view the original announcement on the official government website."
     },
-    {
-      question: "How can I search for specific announcements?",
-      answer: "Use the search bar to find announcements by keywords, policy names, or specific topics. You can also combine search with filters for more precise results."
-    }
   ];
 
   return (

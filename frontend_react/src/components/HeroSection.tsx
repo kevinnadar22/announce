@@ -36,18 +36,14 @@ const HeroSection = ({ onGetStarted }: HeroSectionProps) => {
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-5xl mx-auto text-center">
-          {/* Enhanced Header with Badge */}
-          <div className="inline-flex items-center bg-emerald-100 border border-emerald-200 rounded-full px-4 py-2 mb-6">
-            <Star className="h-4 w-4 text-emerald-600 mr-2" />
-            <span className="text-sm font-medium text-emerald-700">Trusted by 1M+ Citizens</span>
-          </div>
 
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight">
-            <span className="text-emerald-600">🇮🇳 Government</span> Announcements
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+            <span>🇮🇳 </span><span className="bg-gradient-to-r from-emerald-600 via-green-500 to-teal-500 bg-clip-text text-transparent">Government</span>
+            <span className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent"> Announcements</span>
             <br />
-            <span className="text-green-600 relative">
-              Made Simple
-              <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-emerald-400 to-green-400 rounded-full"></div>
+            <span className="relative">
+              <span className="bg-gradient-to-r from-green-600 via-emerald-500 to-teal-600 bg-clip-text text-transparent">Made Simple</span>
+              <div className="absolute -bottom-2 left-0 right-0 h-1.5 bg-gradient-to-r from-emerald-400 via-green-400 to-teal-400 rounded-full"></div>
             </span>
           </h1>
           
@@ -56,12 +52,10 @@ const HeroSection = ({ onGetStarted }: HeroSectionProps) => {
             Your one-stop platform for official communications and policy updates with AI-powered simplification.
           </p>
 
-
-          
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
             <Button 
               onClick={onGetStarted}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group"
+              className="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white px-8 py-3 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group"
             >
               <span>Explore Announcements</span>
               <Search className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
@@ -69,7 +63,7 @@ const HeroSection = ({ onGetStarted }: HeroSectionProps) => {
           </div>
           
           {/* Enhanced Platform Features */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-12 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 mb-12">
             <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 border border-emerald-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
               <Globe className="h-10 w-10 text-emerald-600 mx-auto mb-4" />
               <h3 className="font-semibold text-gray-900 mb-2">Multilingual Support</h3>
@@ -84,11 +78,6 @@ const HeroSection = ({ onGetStarted }: HeroSectionProps) => {
               <Shield className="h-10 w-10 text-teal-600 mx-auto mb-4" />
               <h3 className="font-semibold text-gray-900 mb-2">Verified Sources</h3>
               <p className="text-sm text-gray-600">All content verified from official government sources and PIB releases</p>
-            </div>
-            <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 border border-emerald-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-              <Clock className="h-10 w-10 text-blue-600 mx-auto mb-4" />
-              <h3 className="font-semibold text-gray-900 mb-2">Real-time Updates</h3>
-              <p className="text-sm text-gray-600">Instant notifications for new announcements and policy changes</p>
             </div>
           </div>
 
