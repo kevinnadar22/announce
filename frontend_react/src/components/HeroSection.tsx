@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { TrendingUp, Users, Globe, Clock, Search, Filter, Bell, Zap, Shield, Star } from "lucide-react";
-import { useState } from "react";
+import { TrendingUp, Users, Globe, Clock, Search, Zap, Shield } from "lucide-react";
 import { useStats } from "@/hooks/useStats";
 
 interface HeroSectionProps {

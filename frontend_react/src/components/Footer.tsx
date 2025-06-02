@@ -1,5 +1,4 @@
-import { Twitter, Globe, Languages, Mail, Shield, Award, Clock, Github, Phone, MapPin, FileText, HelpCircle, ExternalLink } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Twitter, Mail,  Github} from "lucide-react";
 
 const Footer = () => {
   return (

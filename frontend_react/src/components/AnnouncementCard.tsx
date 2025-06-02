@@ -1,11 +1,11 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import CompactTooltip from "@/components/ui/compact-tooltip";
-import { ExternalLink, Calendar, Building2, Users, Globe, MapPin, Clock, Languages } from "lucide-react";
+import { ExternalLink, Calendar, Building2, Users, MapPin, Clock, Languages } from "lucide-react";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { decodeLanguages } from "@/lib/languageMapping";
-import { useRef, useEffect, useState } from "react";
+import { useRef } from "react";
 
 interface AnnouncementCardProps {
   id: number;
@@ -20,14 +20,14 @@ interface AnnouncementCardProps {
   availableLanguages: string[];
 }
 
-const AnnouncementCard = ({ 
+const AnnouncementCard = ({
   id,
-  title, 
-  originalText, 
+  title,
+  originalText,
   sourceUrl,
   datePublished,
   pibHq,
-  ministry, 
+  ministry,
   audienceTypes,
   categories,
   availableLanguages,
@@ -69,7 +69,7 @@ const AnnouncementCard = ({
   };
 
   return (
-    <div 
+    <div
       className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm hover:shadow-md transition-all duration-200 group cursor-pointer flex flex-col h-full"
       onClick={handleCardClick}
     >
@@ -82,8 +82,8 @@ const AnnouncementCard = ({
           <Clock className="h-3.5 w-3.5 mr-1" />
           <span>{formatTime(datePublished)}</span>
         </div>
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           size="sm"
           className="text-gray-400 hover:text-gray-600 p-1 h-auto"
           onClick={handleExternalLinkClick}
@@ -91,15 +91,15 @@ const AnnouncementCard = ({
           <ExternalLink className="h-4 w-4" />
         </Button>
       </div>
-      
+
       {/* Title */}
-      <h3 
+      <h3
         ref={titleRef}
         className="text-lg font-semibold text-gray-900 leading-tight mb-3 line-clamp-2"
       >
         {title}
       </h3>
-      
+
       {/* Content Preview */}
       <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-4 flex-grow">
         {originalText}
@@ -125,9 +125,9 @@ const AnnouncementCard = ({
         <div className="flex items-center justify-between">
           <div className="flex gap-1.5">
             {categories.slice(0, 2).map((category, index) => (
-              <Badge 
+              <Badge
                 key={index}
-                variant="secondary" 
+                variant="secondary"
                 className="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 hover:bg-emerald-100 hover:text-emerald-700 transition-colors"
               >
                 {category}
@@ -135,8 +135,8 @@ const AnnouncementCard = ({
             ))}
             {categories.length > 2 && (
               <CompactTooltip content={categories.slice(2)}>
-                <Badge 
-                  variant="secondary" 
+                <Badge
+                  variant="secondary"
                   className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 cursor-pointer hover:bg-gray-200"
                 >
                   +{categories.length - 2}
@@ -144,7 +144,7 @@ const AnnouncementCard = ({
               </CompactTooltip>
             )}
           </div>
-          
+
           <div className="flex items-center gap-3">
             {/* Audience type indicator */}
             <CompactTooltip content={audienceTypes}>
@@ -154,13 +154,13 @@ const AnnouncementCard = ({
                 {audienceTypes.length > 1 && <span className="ml-1">+{audienceTypes.length - 1}</span>}
               </div>
             </CompactTooltip>
-            
+
             {/* Language count */}
 
-              <div className="flex items-center text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
-                <Languages className="h-3.5 w-3.5 mr-1" />
-                <span className="font-medium">{decodedLanguages.length}</span>
-              </div>
+            <div className="flex items-center text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
+              <Languages className="h-3.5 w-3.5 mr-1" />
+              <span className="font-medium">{decodedLanguages.length}</span>
+            </div>
 
           </div>
         </div>

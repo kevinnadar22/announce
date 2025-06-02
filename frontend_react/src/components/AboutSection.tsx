@@ -1,4 +1,4 @@
-import { Search, FileText, Bell, Filter, Globe, Smartphone, Languages, BookOpen, Users } from "lucide-react";
+import { Search, FileText, Bell, Globe, Languages, BookOpen } from "lucide-react";
 
 const AboutSection = () => {
   const features = [
@@ -49,8 +49,8 @@ const AboutSection = () => {
             About Announce
           </h2>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Announce is your trusted platform for accessing official government announcements, 
-            policies, and schemes. We make government communication accessible, searchable, and 
+            Announce is your trusted platform for accessing official government announcements,
+            policies, and schemes. We make government communication accessible, searchable, and
             user-friendly for all citizens across India.
           </p>
         </div>
