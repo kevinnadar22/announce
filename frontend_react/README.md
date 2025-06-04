@@ -153,7 +153,7 @@ export default {
    - Root Directory: `/frontend_react`
 
 3. **Set environment variables in Vercel dashboard**:
-   - `VITE_API_BASE_URL`: Your backend API URL
+   - `VITE_API_URL`: Your backend API URL
 
 4. **Deploy**:
    Vercel will automatically deploy on every push to the main branch.
@@ -166,7 +166,7 @@ export default {
    - Publish Directory: `dist`
 
 3. **Set environment variables**:
-   - `VITE_API_BASE_URL`: Your backend API URL
+   - `VITE_API_URL`: Your backend API URL
 
 ## Contact
 
