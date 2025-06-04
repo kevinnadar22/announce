@@ -1,9 +1,5 @@
 # Announce Frontend
 
-<div align="center">
-  <img src="public/logo-modified.png" alt="Announce Logo" width="80" height="80">
-</div>
-
 A modern React frontend application built with TypeScript, Vite, and Tailwind CSS that provides an intuitive interface for accessing and viewing government announcements. This frontend consumes the Django REST Framework backend API to display processed government content in an accessible format.
 
 ## Tech Stack

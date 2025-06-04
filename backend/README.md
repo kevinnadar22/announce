@@ -1,7 +1,33 @@
 # Announce Backend
 
-
 A Django REST Framework backend that powers the government announcement processing platform. This backend handles automated scraping from pib.gov.in using Celery and RabbitMQ, processes content through LLM APIs, and provides a comprehensive REST API.
+
+## Table of Contents
+
+- [Tech Stack](#tech-stack)
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Environment Configuration](#environment-configuration)
+  - [Required Environment Variables](#required-environment-variables)
+  - [Why These Environment Variables Are Needed](#why-these-environment-variables-are-needed)
+  - [Free Cloud Services for Environment Variables](#free-cloud-services-for-environment-variables)
+- [Installation and Setup](#installation-and-setup)
+  - [Local Development](#local-development)
+- [API Documentation](#api-documentation)
+- [CORS and Allowed Hosts Configuration](#cors-and-allowed-hosts-configuration)
+  - [CORS Configuration](#cors-configuration)
+  - [Allowed Hosts Configuration](#allowed-hosts-configuration)
+- [Deployment](#deployment)
+  - [Docker Deployment](#docker-deployment)
+  - [Heroku Deployment](#heroku-deployment)
+  - [VPS Deployment](#vps-deployment)
+- [Database Support](#database-support)
+- [Monitoring and Debugging](#monitoring-and-debugging)
+  - [Celery Monitoring with Flower](#celery-monitoring-with-flower)
+  - [Flower Interface Screenshots](#flower-interface-screenshots)
+  - [Logs](#logs)
+- [Support](#support)
+  - [Contact](#contact)
 
 ## Tech Stack
 
@@ -125,7 +151,7 @@ mkdir -p secrets/dev secrets/prod
 
 Watch this video guide for creating JSON configuration files:
 
-[Watch JSON Configuration Guide](https://github.com/kevinnadar22/announce/raw/main/assets/jsonguide.mp4)
+[Watch JSON Configuration Guide](https://github.com/kevinnadar22/announce/raw/main/asset/jsonguide.mp4)
 
 
 7. **Run database migrations**

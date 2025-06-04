@@ -11,7 +11,7 @@
 <div align="center">
   <img src="asset/hero.png" alt="Announce Platform Hero" width="100%" style="border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
 </div>
-A modern platform that makes government announcements and circulars accessible to everyone by translating bureaucratic language into simple, understandable text and audio formats.
+A modern platform that makes government announcements and circulars accessible to everyone by translating bureaucratic language into simple, understandable text in 11+ regional languages
 
 ## Table of Contents
 
