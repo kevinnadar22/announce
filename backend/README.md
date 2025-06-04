@@ -1,305 +1,333 @@
-# Heroku Deployment Guide
+# Announce Backend
 
-This guide provides two deployment methods for your Django application on Heroku: using **Buildpacks** (recommended for simplicity) and **Container Deployment** (for more control).
+
+A Django REST Framework backend that powers the government announcement processing platform. This backend handles automated scraping from pib.gov.in using Celery and RabbitMQ, processes content through LLM APIs, and provides a comprehensive REST API.
+
+## Tech Stack
+
+- Django 5.2.1 + DRF 3.16.0
+- PostgreSQL
+- Celery 5.3.6 + RabbitMQ
+- Redis 5.0.2
+- Celery Worker/Beat/Redbeat
+- Gemini & Groq APIs
+- MongoDB, Flower
+
+## Features
+
+- **Automated Web Scraping**: Continuous monitoring of pib.gov.in for new announcements
+- **AI Content Processing**: Integration with Gemini and Groq APIs for content translation and summarization
+- **RESTful API**: Comprehensive API endpoints with filtering, pagination, and search
 
 ## Prerequisites
 
-1. **Heroku CLI** installed on your machine
-   ```bash
-   # Install Heroku CLI (macOS)
-   brew tap heroku/brew && brew install heroku
-   
-   # Or download from: https://devcenter.heroku.com/articles/heroku-cli
-   ```
+- Python 3.9+
+- PostgreSQL 12+
+- Redis Server
+- RabbitMQ Server (or CloudAMQP account)
 
-2. **Git** repository initialized
-3. **Heroku account** created at [heroku.com](https://heroku.com)
+## Environment Configuration
 
-## Method 1: Buildpack Deployment (Recommended)
+### Required Environment Variables
 
-### Step 1: Login to Heroku
+Create a `.env` file in the backend directory with the following configuration:
+
+```bash
+# .env
+
+# LLM API Keys (at least one required)
+GEMINI_API_KEY=your_gemini_api_key_here
+GROQ_API_KEY=your_groq_api_key_here
+
+# Message Queue (CloudAMQP recommended for production)
+CELERY_BROKER_URL=amqp://username:password@hostname:port/vhost
+
+# Result Backend (MongoDB)
+CELERY_RESULT_BACKEND=mongodb://username:password@hostname:port/database
+
+# Redis for Celery Beat scheduling
+CELERY_REDBEAT_REDIS_URL=redis://username:password@hostname:port/0
+
+# Django Secret Key
+SECRET_KEY=your_very_secure_secret_key_here
+
+# PostgreSQL Database Configuration
+DB_NAME=postgres
+DB_USER=your_db_user
+DB_PASSWORD=your_db_password
+DB_HOST=localhost
+DB_PORT=5432
+
+# Optional: Django Settings
+DEBUG=False
+```
+
+### Why These Environment Variables Are Needed
+
+**LLM API Keys**: 
+- `GEMINI_API_KEY`: Required for Google's Gemini API to process and translate government announcements
+- `GROQ_API_KEY`: Alternative LLM API for content processing (at least one LLM API key is required)
+
+**Message Queue Configuration**:
+- `CELERY_BROKER_URL`: RabbitMQ connection for task distribution between workers
+- `CELERY_RESULT_BACKEND`: MongoDB for storing task results and processed content
+- `CELERY_REDBEAT_REDIS_URL`: Redis connection for persistent task scheduling
+
+**Database Configuration**:
+- PostgreSQL is the only supported database due to specific query requirements and data integrity needs
+- All database connection parameters must be provided for proper operation
+
+**Security**:
+- `SECRET_KEY`: Django's cryptographic signing key for sessions, CSRF protection, and other security features
+
+### Free Cloud Services for Environment Variables
+
+- **GEMINI_API_KEY**: Get free API key from [Google AI Studio](https://makersuite.google.com/)
+- **GROQ_API_KEY**: Get free API key from [Groq Console](https://console.groq.com/)
+- **CELERY_BROKER_URL**: Free RabbitMQ instance from [CloudAMQP](https://cloudamqp.com/)
+- **CELERY_RESULT_BACKEND**: Free MongoDB cluster from [MongoDB Atlas](https://mongodb.com/)
+- **CELERY_REDBEAT_REDIS_URL**: Free Redis instance from [Redis.io](https://redis.io/)
+- **PostgreSQL**: Free database from [Neon](https://neon.tech/) or [Supabase](https://supabase.com/)
+
+## Installation and Setup
+
+### Local Development
+
+1. **Clone and navigate to backend**
+```bash
+git clone https://github.com/kevinnadar22/announce.git
+cd announce/backend
+```
+
+2. **Create virtual environment**
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+3. **Install dependencies**
+```bash
+pip install -r requirements.txt
+```
+
+4. **Set up environment variables**
+```bash
+cp prod.env .env
+# Edit .env with your configuration
+```
+
+5. **Create secrets directory structure**
+```bash
+mkdir -p secrets/dev secrets/prod
+```
+
+6. **Create scraping configuration files**
+
+Watch this video guide for creating JSON configuration files:
+
+[Watch JSON Configuration Guide](https://github.com/kevinnadar22/announce/raw/main/assets/jsonguide.mp4)
+
+
+7. **Run database migrations**
+```bash
+python manage.py migrate
+```
+
+8. **Create superuser (optional)**
+```bash
+python manage.py createsuperuser
+```
+
+9. **Start development server**
+```bash
+python manage.py runserver
+```
+
+10. **Start Celery workers (in separate terminals)**
+```bash
+# Worker process
+celery -A api worker --loglevel=info
+
+# Beat scheduler
+celery -A api beat --loglevel=info
+
+# Flower monitoring (optional)
+celery -A api flower
+```
+
+
+## API Documentation
+
+Once the server is running, access the API documentation at:
+
+- **Swagger UI**: `http://localhost:8000/api/docs/`
+- **ReDoc**: `http://localhost:8000/api/redoc/`
+- **OpenAPI Schema**: `http://localhost:8000/api/schema/`
+
+## CORS and Allowed Hosts Configuration
+
+### CORS Configuration
+
+The backend uses `django-cors-headers` to handle Cross-Origin Resource Sharing. Configure CORS settings in `api/settings.py`:
+
+```python
+# For development
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # React dev server
+    "http://127.0.0.1:3000",
+]
+
+# For production
+CORS_ALLOWED_ORIGINS = [
+    "https://yourdomain.com",
+    "https://announce.org.in",
+]
+
+# Allow credentials for authentication
+CORS_ALLOW_CREDENTIALS = True
+```
+
+### Allowed Hosts Configuration
+
+Configure allowed hosts in `api/settings.py`:
+
+```python
+# For development
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+
+# For production
+ALLOWED_HOSTS = ['yourdomain.com', 'announce.org.in', 'your-heroku-app.herokuapp.com']
+```
+
+## Deployment
+
+### Docker Deployment
+
+```bash
+docker-compose up -d
+```
+
+### Heroku Deployment
+
+1. **Install Heroku CLI and login**
 ```bash
 heroku login
 ```
 
-### Step 2: Create Heroku Application
+2. **Create Heroku app**
 ```bash
-# Create a new Heroku app (replace 'your-app-name' with your desired name)
 heroku create your-app-name
-
-# Or let Heroku generate a random name
-heroku create
 ```
 
-### Step 3: Set Python Buildpack
+3. **Set environment variables**
 ```bash
-# Set the Python buildpack
-heroku buildpacks:set heroku/python
-
-# Verify buildpack is set
-heroku buildpacks
+heroku config:set SECRET_KEY=your-secret-key
+heroku config:set GEMINI_API_KEY=your-gemini-key
+heroku config:set CELERY_BROKER_URL=your-rabbitmq-url
+# ... add all other environment variables
 ```
 
-### Step 4: Configure Environment Variables
+4. **Deploy**
 ```bash
-# Set Django settings
-heroku config:set DJANGO_SETTINGS_MODULE=api.settings
-heroku config:set SECRET_KEY="your-secret-key-here"
-heroku config:set DEBUG=False
-heroku config:set ALLOWED_HOSTS="your-app-name.herokuapp.com"
-
-# Database (Heroku Postgres)
-heroku addons:create heroku-postgresql:mini
-# This automatically sets DATABASE_URL
-
-# Redis (for Celery)
-heroku addons:create heroku-redis:mini
-# This automatically sets REDIS_URL
-
-# Optional: Set additional environment variables
-heroku config:set ENVIRONMENT=production
-```
-
-### Step 5: Configure Database Settings
-Make sure your `api/settings.py` includes database configuration for Heroku:
-
-```python
-import dj_database_url
-import os
-
-# Database configuration for Heroku
-if 'DATABASE_URL' in os.environ:
-    DATABASES = {
-        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
-    }
-```
-
-### Step 6: Update Procfile for Buildpack Deployment
-Your current `Procfile` needs to be updated for proper port binding:
-
-```
-web: gunicorn api.wsgi:application --bind 0.0.0.0:$PORT --workers 3 --worker-class sync --timeout 30 --keep-alive 2 --max-requests 1000 --max-requests-jitter 100 --log-level info
-worker: celery -A api worker --loglevel=info --concurrency=4 -E
-beat: celery -A api beat --loglevel=info
-flower: celery -A api flower --port=5555 --address=0.0.0.0 --basic_auth=admin:123456 --loglevel=info
-```
-
-### Step 7: Add Required Dependencies
-Ensure your `requirements.txt` includes (already present in your file):
-- `gunicorn` - WSGI server
-- `psycopg2-binary` - PostgreSQL adapter
-- `dj-database-url` - Database URL parsing
-
-### Step 8: Deploy Application
-```bash
-# Add and commit all changes
 git add .
-git commit -m "Configure for Heroku deployment"
-
-# Deploy to Heroku
+git commit -m "Deploy to Heroku"
 git push heroku main
-# or if your default branch is master:
-# git push heroku master
 ```
 
-### Step 9: Run Database Migrations
+5. **Run migrations**
 ```bash
-# Run migrations on Heroku
 heroku run python manage.py migrate
-
-# Create superuser (optional)
-heroku run python manage.py createsuperuser
-
-# Collect static files
-heroku run python manage.py collectstatic --noinput
 ```
 
-### Step 10: Scale Dynos
+6. **Scale dynos for production**
 ```bash
-# Scale web dyno
+# Scale web dyno for handling HTTP requests
 heroku ps:scale web=1
 
-# Scale worker dyno for Celery (optional)
+# Scale worker dyno for processing background tasks
 heroku ps:scale worker=1
 
-# Scale beat dyno for scheduled tasks (optional)
+# Scale beat dyno for scheduled tasks (only need 1)
 heroku ps:scale beat=1
+
+# Optional: Scale flower dyno for monitoring (development/staging)
+heroku ps:scale flower=1
+
+# For production with higher load, you can scale multiple workers
+heroku ps:scale web=2 worker=3 beat=1
 ```
 
-## Method 2: Container Deployment
+**Note**: The `beat` dyno should always be scaled to exactly 1 to avoid duplicate scheduled tasks. You can scale multiple `web` and `worker` dynos based on your traffic and processing needs.
 
-### Step 1: Set Stack to Container
+### VPS Deployment
+
+1. **Set up the server**
 ```bash
-# Set Heroku stack to container
-heroku stack:set container
+# Install system dependencies
+sudo apt update
+sudo apt install python3 python3-pip python3-venv postgresql postgresql-contrib redis-server
+
+# Install and configure PostgreSQL
+sudo -u postgres createuser --interactive
+sudo -u postgres createdb announce_db
 ```
 
-### Step 2: Use Existing heroku.yml
-Your project already has a `heroku.yml` file configured for container deployment. This tells Heroku to build using your `Dockerfile`.
-
-### Step 3: Update heroku.yml for Multiple Services
-If you want to run Celery workers alongside your web app:
-
-```yaml
-build:
-  docker:
-    web: Dockerfile
-    worker: Dockerfile
-    beat: Dockerfile
-run:
-  web: gunicorn --bind 0.0.0.0:$PORT --workers 3 --worker-class sync --timeout 30 --keep-alive 2 --max-requests 1000 --max-requests-jitter 100 --log-level info api.wsgi:application
-  worker: celery -A api worker --loglevel=info --concurrency=4 -E
-  beat: celery -A api beat --loglevel=info
-```
-
-### Step 4: Deploy Container
+2. **Deploy application**
 ```bash
-# Deploy using container
-git add .
-git commit -m "Container deployment configuration"
-git push heroku main
+# Clone repository
+git clone https://github.com/kevinnadar22/announce.git
+cd announce/backend
+
+# Set up Python environment
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+
+# Set up environment
+cp prod.env .env
+# Edit .env with your configuration
+
+# Run migrations and collect static files
+python manage.py migrate
+python manage.py collectstatic --noinput
 ```
 
-## Post-Deployment Configuration
+## Database Support
 
-### Environment Variables Management
+**Important**: This application **only supports PostgreSQL**. SQLite and other databases are not supported due to:
+
+- Specific query requirements and data integrity needs
+- Lack of support for certain Django features
+
+## Monitoring and Debugging
+
+### Celery Monitoring with Flower
+
+Access Flower monitoring interface:
 ```bash
-# View all config vars
-heroku config
-
-# Set additional variables
-heroku config:set VAR_NAME=value
-
-# Remove variables
-heroku config:unset VAR_NAME
+celery -A api flower
+# Visit http://localhost:5555
 ```
 
-### Monitoring and Logs
+### Logs
+
+Monitor application logs:
 ```bash
-# View application logs
-heroku logs --tail
+# Django logs
+tail -f logs/django.log
 
-# View specific dyno logs
-heroku logs --dyno=web.1 --tail
-
-# Monitor dyno status
-heroku ps
+# Celery logs
+tail -f logs/celery.log
 ```
 
-### Database Management
-```bash
-# Access database console
-heroku pg:psql
+## Support
 
-# View database info
-heroku pg:info
+For technical issues or questions:
+- Check the API documentation at `/api/docs/`
+- Review the Django logs for error details
+- Ensure all environment variables are properly configured
 
-# Reset database (WARNING: This deletes all data)
-heroku pg:reset DATABASE_URL --confirm your-app-name
-```
-
-### Redis Management
-```bash
-# View Redis info
-heroku redis:info
-
-# Access Redis CLI
-heroku redis:cli
-```
-
-## Scaling Your Application
-
-### Scale Dynos
-```bash
-# Scale web dynos
-heroku ps:scale web=2
-
-# Scale worker dynos
-heroku ps:scale worker=2
-
-# Scale beat dynos (only need 1)
-heroku ps:scale beat=1
-```
-
-### Upgrade Plans
-```bash
-# Upgrade database
-heroku addons:upgrade heroku-postgresql:basic
-
-# Upgrade Redis
-heroku addons:upgrade heroku-redis:premium-0
-```
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Build Failures**
-   ```bash
-   # Check build logs
-   heroku logs --tail
-   
-   # Rebuild application
-   git commit --allow-empty -m "Empty commit to trigger build"
-   git push heroku main
-   ```
-
-2. **Database Connection Issues**
-   - Ensure `DATABASE_URL` is set: `heroku config:get DATABASE_URL`
-   - Check database configuration in `settings.py`
-   - Run migrations: `heroku run python manage.py migrate`
-
-3. **Static Files Issues**
-   ```bash
-   # Collect static files
-   heroku run python manage.py collectstatic --noinput
-   ```
-
-4. **Celery Worker Issues**
-   - Ensure Redis is configured: `heroku config:get REDIS_URL`
-   - Check worker dyno status: `heroku ps`
-   - Scale worker dyno: `heroku ps:scale worker=1`
-
-### Useful Commands
-```bash
-# Open application in browser
-heroku open
-
-# Access Django shell
-heroku run python manage.py shell
-
-# Run one-off commands
-heroku run python manage.py <command>
-
-# Restart all dynos
-heroku restart
-```
-
-## Security Considerations
-
-1. **Environment Variables**: Never commit sensitive data to git
-2. **DEBUG Setting**: Always set `DEBUG=False` in production
-3. **SECRET_KEY**: Generate a new secret key for production
-4. **ALLOWED_HOSTS**: Restrict to your domain only
-5. **Database Security**: Use strong passwords and SSL connections
-
-## Cost Optimization
-
-1. **Use Eco Dynos**: For development/testing ($5-7/month per dyno)
-2. **Scale Down**: Turn off dynos when not needed
-3. **Database**: Start with mini plan and upgrade as needed
-4. **Redis**: Start with mini plan for basic caching needs
-
-## Next Steps
-
-1. Set up **Custom Domain**: `heroku domains:add yourdomain.com`
-2. **SSL Certificate**: `heroku certs:auto:enable`
-3. **CI/CD Pipeline**: Connect to GitHub for automatic deployments
-4. **Monitoring**: Set up application monitoring with New Relic or similar
-5. **Backup**: Set up regular database backups
-
----
-
-**Note**: Replace placeholders like `your-app-name`, `your-secret-key-here`, etc., with your actual values.
-
-For more detailed information, visit the [Heroku Dev Center](https://devcenter.heroku.com/). 
+### Contact
+- Email: jesikamaraj@gmail.com
+- GitHub Issues: https://github.com/kevinnadar22/announce/issues
+- Twitter: [@kevinnadar22](https://twitter.com/kevinnadar22)
