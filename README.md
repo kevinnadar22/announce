@@ -9,7 +9,7 @@
 
 
 <div align="center">
-  <img src="asset/hero.png" alt="Announce Platform Hero" width="100%" style="border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+  <img src="asset/hero.png" alt="Announce Hero" width="600">
 </div>
 A modern platform that makes government announcements and circulars accessible to everyone by translating bureaucratic language into simple, understandable text in 11+ regional languages
 
@@ -70,12 +70,10 @@ The platform uses a distributed architecture with the following components:
 ### Platform Overview
 The Announce platform provides a clean, modern interface for accessing government announcements with AI-powered translations and summaries.
 
-### Announcement View
-![Announcement View Screenshot](asset/filter.png)
-
-### Detail View
-![Mobile View Screenshot](asset/topdetail.png)
-![Mobile View Screenshot](asset/bottomdetail.png)
+| View Type | Screenshots |
+|-----------|-------------|
+| **Announcement View** | ![Announcement View](asset/filter.png) |
+| **Detail View** | ![Top Detail](asset/topdetail.png) ![Bottom Detail](asset/bottomdetail.png) |
 
 ## Quick Start
 
