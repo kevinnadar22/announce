@@ -309,6 +309,22 @@ celery -A api flower
 # Visit http://localhost:5555
 ```
 
+**When running with Docker**: Flower is configured with basic authentication for security.
+- **Username**: `admin`
+- **Password**: `123456`
+- **URL**: `http://localhost:5555`
+
+#### Flower Interface Screenshots
+
+**Flower Home Dashboard**:
+![Flower Home](../asset/flowerhome.png)
+
+**Flower Tasks Monitoring**:
+![Flower Tasks](../asset/flowertasks.png)
+
+The Flower interface provides real-time monitoring of:
+- Active and completed tasks
+
 ### Logs
 
 Monitor application logs:
