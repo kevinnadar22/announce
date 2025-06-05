@@ -157,10 +157,7 @@ const AnnouncementCard = ({
 
             {/* Language count */}
 
-            <div className="flex items-center text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
-              <Languages className="h-3.5 w-3.5 mr-1" />
-              <span className="font-medium">{decodedLanguages.length}</span>
-            </div>
+
 
           </div>
         </div>
