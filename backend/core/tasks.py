@@ -39,13 +39,6 @@ def _save_translated_text_data(
 
 # --- Celery Tasks ---
 
-
-@shared_task(bind=True)
-def add(self, a, b):
-    # This is your test task, keep it simple
-    return a + b
-
-
 @shared_task(bind=True)
 def initial_pib_scrape_task(self, limit=None, url=None):
     """
