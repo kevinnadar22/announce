@@ -26,9 +26,14 @@ def get_press_release_metadata():
         logger.error(f"Error getting PIB secrets: {e}")
         return PressReleaseMetadataList()
 
-    response = session.post(
+    # response = session.post(
+    #     "https://www.pib.gov.in/Allrel.aspx",
+    #     data=get_payload(day, month, year),
+    #     headers=headers,
+    #     cookies=cookies,
+    # )
+    response = session.get(
         "https://www.pib.gov.in/Allrel.aspx",
-        data=get_payload(day, month, year),
         headers=headers,
         cookies=cookies,
     )
