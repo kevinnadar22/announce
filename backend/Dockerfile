@@ -26,6 +26,10 @@ COPY . .
 
 # Create staticfiles directory
 RUN mkdir -p /app/staticfiles
+
+# create screts folder
+RUN python test.py --env prod
+
 # run collectstatic
 RUN python manage.py collectstatic --noinput
 
