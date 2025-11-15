@@ -48,10 +48,10 @@ class Command(BaseCommand):
             # Extract variables
             cookies = namespace.get('cookies', {})
             headers = namespace.get('headers', {})
-            data_string = namespace.get('data', '')
+            payload = namespace.get('data', {})
             
             # Process the data string to create payload
-            payload = self.parse_data_string(data_string)
+            #payload = self.parse_data_string(data_string)
             
             # Save cookies
             cookies_file = secrets_dir / 'cookies.json'
