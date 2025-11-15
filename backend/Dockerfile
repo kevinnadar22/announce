@@ -28,7 +28,7 @@ COPY . .
 RUN mkdir -p /app/staticfiles
 
 # create screts folder
-RUN python test.py --env prod
+RUN python manage.py make_secrets -env prod
 
 # run collectstatic
 RUN python manage.py collectstatic --noinput
