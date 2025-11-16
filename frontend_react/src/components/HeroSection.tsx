@@ -36,10 +36,6 @@ const HeroSection = ({ onGetStarted }: HeroSectionProps) => {
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-5xl mx-auto text-center">
 
-          {/* have a text saying the project is stopped its developmenet and no longer maintained  */}
-          <div className="bg-emerald-600 text-white px-7 py-4 shadow mb-6 text-center mx-auto w-fit">
-            <span>Development and no longer maintained </span>
-          </div>
 
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
             <span>🇮🇳 </span><span className="bg-gradient-to-r from-emerald-600 via-green-500 to-teal-500 bg-clip-text text-transparent">Government</span>
