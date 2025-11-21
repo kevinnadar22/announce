@@ -10,6 +10,7 @@ services:
     volumes:
       - .:/app
     command: gunicorn api.wsgi:application -c gunicorn.conf.py
+    container_name: announce_backend
 
   # Celery worker
   celery-worker:
@@ -21,6 +22,7 @@ services:
       - .:/app
       - ${SECRETS_DIR:-./secrets}:/secrets
     command: celery -A api worker --concurrency=4 -E
+    container_name: announce_worker
 
   # Celery beat scheduler
   celery-beat:
@@ -31,3 +33,4 @@ services:
     volumes:
       - .:/app
     command: celery -A api beat
+    container_name: announce_beat
