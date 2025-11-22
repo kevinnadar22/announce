@@ -7,6 +7,8 @@ services:
       - "${PORT}:${PORT}"
     env_file:
       - .env
+    environment:
+      - MALLOC_ARENA_MAX=2
     volumes:
       - .:/app
     command: gunicorn api.wsgi:application -c gunicorn.conf.py
@@ -18,10 +20,12 @@ services:
     restart: unless-stopped
     env_file:
       - .env
+    environment:
+      - MALLOC_ARENA_MAX=2
     volumes:
       - .:/app
       - ${SECRETS_DIR:-./secrets}:/secrets
-    command: celery -A api worker --concurrency=4 -E
+    command: celery -A api worker --concurrency=1 --pool=solo
     container_name: announce_worker
 
   # Celery beat scheduler
@@ -30,7 +34,9 @@ services:
     restart: unless-stopped
     env_file:
       - .env
+    environment:
+      - MALLOC_ARENA_MAX=2
     volumes:
       - .:/app
-    command: celery -A api beat
+    command: celery -A api beat  --pool=solo
     container_name: announce_beat
