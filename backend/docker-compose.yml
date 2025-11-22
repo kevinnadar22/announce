@@ -38,5 +38,5 @@ services:
       - MALLOC_ARENA_MAX=2
     volumes:
       - .:/app
-    command: celery -A api beat  --pool=solo
+    command: celery -A api beat 
     container_name: announce_beat
