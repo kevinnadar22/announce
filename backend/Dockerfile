@@ -1,48 +1,56 @@
-# Use official Python runtime as parent image
-FROM python:3.11-slim as base
+# ---- builder ----
+FROM python:3.11-slim AS builder
 
-# Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    DEBIAN_FRONTEND=noninteractive
+    DEBIAN_FRONTEND=noninteractive \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    postgresql-client \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     python3-dev \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Set work directory
 WORKDIR /app
 
-# Install Python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
-# Copy project
+COPY requirements.txt .
+RUN pip install --upgrade pip && pip install -r requirements.txt
+
 COPY . .
 
-# Create staticfiles directory
-RUN mkdir -p /app/staticfiles
+RUN mkdir -p /app/staticfiles /app/logs \
+    && python manage.py make_secrets --env prod \
+    && python manage.py collectstatic --noinput
 
-# create screts folder
-RUN python manage.py make_secrets --env prod
+# ---- runtime ----
+FROM python:3.11-slim AS runtime
 
-# run collectstatic
-RUN python manage.py collectstatic --noinput
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    DEBIAN_FRONTEND=noninteractive \
+    PATH="/opt/venv/bin:$PATH"
 
-# Create logs directory with proper permissions
-RUN mkdir -p /app/logs
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 \
+    postgresql-client \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get purge -y --auto-remove \
+    && rm -rf /var/cache/apt /tmp/*
 
-# Create non-root user
-RUN groupadd -r django && useradd -r -g django django
-RUN chown -R django:django /app
+WORKDIR /app
+
+COPY --from=builder /opt/venv /opt/venv
+COPY --from=builder /app /app
+
+RUN groupadd -r django && useradd -r -g django django \
+    && chown -R django:django /app
 USER django
 
-# Expose port
 EXPOSE 8000
 
-# Default command (can be overridden in docker-compose)
 CMD ["gunicorn", "api.wsgi:application", "-c", "gunicorn.conf.py"]

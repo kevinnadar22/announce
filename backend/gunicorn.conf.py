@@ -7,7 +7,7 @@ backlog = 2048
 # Worker processes
 workers = 1
 worker_class = "sync"
-worker_connections = 1000
+worker_connections = 1
 timeout = 30
 keepalive = 2
 
