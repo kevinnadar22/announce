@@ -52,6 +52,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://announce.org.in",
     "https://www.announce.org.in",
     "http://127.0.0.1:5500",
+    "https://announce.mariakevin.in",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
