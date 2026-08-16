@@ -23,6 +23,20 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY . .
 
+# Dummy values only so Django can import settings for collectstatic / make_secrets.
+# Real secrets must come from runtime env (Easypanel / compose) — never as build-args.
+ENV SECRET_KEY=build-only-not-a-secret \
+    DEBUG=False \
+    ALLOWED_HOSTS=* \
+    DB_NAME=build \
+    DB_USER=build \
+    DB_PASSWORD=build \
+    DB_HOST=localhost \
+    DB_PORT=5432 \
+    CELERY_BROKER_URL=redis://localhost:6379/0 \
+    CELERY_RESULT_BACKEND=redis://localhost:6379/1 \
+    CELERY_REDBEAT_REDIS_URL=redis://localhost:6379/0
+
 RUN mkdir -p /app/staticfiles /app/logs \
     && python manage.py make_secrets --env prod \
     && python manage.py collectstatic --noinput
